@@ -73,15 +73,16 @@ export default function Header({ lang, dict }: HeaderProps) {
             <Link
               href={switchedPath}
               className="flex items-center gap-1.5 text-[13px] tracking-wide uppercase border border-slate-300 px-3 py-1.5 bg-white hover:bg-slate-50 transition-colors duration-200 rounded-xs"
+              aria-label={`Switch language to ${otherLang.toUpperCase()}`}
             >
               <span
-                className={lang === "id" ? "text-slate-900 font-bold" : "text-slate-400 font-medium"}
+                className={lang === "id" ? "text-slate-900 font-bold" : "text-slate-600 font-medium"}
               >
                 ID
               </span>
-              <span className="text-slate-300">|</span>
+              <span className="text-slate-400">|</span>
               <span
-                className={lang === "en" ? "text-slate-900 font-bold" : "text-slate-400 font-medium"}
+                className={lang === "en" ? "text-slate-900 font-bold" : "text-slate-600 font-medium"}
               >
                 EN
               </span>

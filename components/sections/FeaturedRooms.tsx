@@ -104,6 +104,7 @@ export default function FeaturedRooms({ dict, lang }: Props) {
                     href={getWhatsAppUrl(waMessage)}
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label={`${dict.accommodation.bookCta} - ${room.name}`}
                     className="inline-flex items-center gap-1.5 text-ocean-deep text-xs font-bold tracking-wider uppercase hover:text-ocean transition-colors duration-200"
                   >
                     <span>{dict.accommodation.bookCta}</span>

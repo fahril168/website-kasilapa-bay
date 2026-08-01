@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import type { Locale, Dictionary } from "@/lib/i18n";
@@ -20,13 +21,13 @@ export default function HeroSection({ dict, lang }: Props) {
     <section className="relative h-[100svh] min-h-[600px] flex items-center">
       {/* Background image */}
       <div className="absolute inset-0 bg-slate-900">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: "url('/img/hero.webp')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
+        <Image
+          src="/img/hero.webp"
+          alt="Kasilapa Bay Beachfront"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
         />
         {/* Subtle dark gradient overlay for text readability */}
         <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/50 to-transparent" />
