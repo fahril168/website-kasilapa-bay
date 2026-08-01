@@ -18,7 +18,7 @@
   },
   "about": {
     "headline": "Ultimate Comfort in Tomia Island",
-    "description": "Kasilapa Bay is the best accommodation in Wakatobi, blending restful comfort, friendly service, and affordable pricing. Whether you are a backpacker, solo traveler, couple seeking romantic tranquility, or a family vacationing together, Kasilapa Bay brings a warm home-away-from-home atmosphere."
+    "description": "Kasilapa Bay is the best accommodation in Wakatobi, blending restful comfort, friendly service, and affordable pricing. Whether you are a backpacker, traveler, or a family vacationing together, Kasilapa Bay brings a warm home-away-from-home atmosphere."
   },
   "accommodation": {
     "title": "Accommodation",
@@ -78,7 +78,7 @@
       {
         "name": "Kahianga Peak",
         "category": "Scenic Views",
-        "description": "The highest point on Tomia with a 360° panorama — endless blue ocean, small villages, and lush tropical forest.",
+        "description": "The highest point on Tomia. with endless blue ocean view, beautiful sunset, and lush tropical forest.",
         "distance": "15 min drive"
       },
       {
@@ -102,7 +102,7 @@
       {
         "name": "Patua Fortress",
         "category": "History & Culture",
-        "description": "Patua Fortress is one of the historical fortresses that must be visited when in Tomia Island, Wakatobi. Located on a hilltop, this fortress offers a stunning 360-degree panorama from green hills to the vast blue ocean. Built during the kingdom era, Patua Fortress stands as a silent witness to the long history of civilization in Wakatobi. Today, visitors can walk around the fortress area, enjoy the fresh air, and capture moments with a beautiful natural landscape background.",
+        "description": "Located on a hilltop, this fortress offers a stunning view from green hills to the vast blue ocean. Built during the kingdom era, Patua Fortress stands as a silent witness to the long history of civilization in Wakatobi.",
         "distance": "18 min drive"
       }
     ]

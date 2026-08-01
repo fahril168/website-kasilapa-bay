@@ -64,9 +64,9 @@ export default function AccommodationContent({ dict, lang }: Props) {
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   whileHover={{ y: -4 }}
-                  viewport={{ once: true, margin: "-60px" }}
-                  transition={{ duration: 0.4, delay: i * 0.1 }}
-                  className="group bg-slate-50 border border-slate-200 hover:border-ocean-deep/50 grid grid-cols-1 lg:grid-cols-2 rounded-sm overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300"
+                  viewport={{ once: true, margin: "-20px" }}
+                  transition={{ duration: 0.5, ease: "easeOut", delay: i * 0.1 }}
+                  className="group bg-slate-50 border border-slate-200 hover:border-ocean-deep/50 grid grid-cols-1 lg:grid-cols-2 rounded-sm overflow-hidden shadow-xs hover:shadow-xl transition-colors transition-shadow duration-300"
                 >
                   {/* Image with zoom on hover */}
                   <div
