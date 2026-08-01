@@ -11,9 +11,15 @@ type Props = {
 };
 
 const galleryImages = [
+  { src: "/img/rooms/24.webp", category: "property", alt: "Deluxe Junior Suite" },
+  { src: "/img/rooms/2.webp", category: "property", alt: "Deluxe Junior Suite" },
+  { src: "/img/rooms/3.webp", category: "property", alt: "Deluxe Junior Suite" },
+  { src: "/img/rooms/18.webp", category: "property", alt: "Deluxe Junior Suite" },
+  { src: "/img/rooms/7.webp", category: "property", alt: "Deluxe Junior Suite" },
   { src: "/img/rooms/6.webp", category: "property", alt: "Deluxe Junior Suite" },
-  { src: "/img/rooms/12.webp", category: "property", alt: "Deluxe Room" },
-  { src: "/img/rooms/3.webp", category: "property", alt: "Deluxe Double" },
+  { src: "/img/rooms/13.webp", category: "property", alt: "Deluxe Junior Suite" },
+  { src: "/img/rooms/22.webp", category: "property", alt: "Deluxe Room" },
+  { src: "/img/rooms/10.webp", category: "property", alt: "Deluxe Double" },
   { src: "/img/destinations/hondue.webp", category: "island", alt: "Pantai Hondue" },
   { src: "/img/destinations/kahianga.webp", category: "island", alt: "Puncak Kahianga" },
   { src: "/img/destinations/roma.webp", category: "underwater", alt: "Spot Diving Roma" },
