@@ -49,7 +49,7 @@ export default function HeroSection({ dict, lang }: Props) {
             {dict.hero.tagline}
           </h1>
           <p
-            className="text-white/90 text-sm sm:text-base lg:text-lg leading-relaxed mb-8 sm:mb-10 max-w-md text-right md:text-left"
+            className="text-white/90 text-sm sm:text-base lg:text-lg leading-relaxed mb-0 md:mb-10 max-w-md text-right md:text-left"
             style={{ color: "#ffffff" }}
           >
             {dict.hero.subtitle}
@@ -58,7 +58,7 @@ export default function HeroSection({ dict, lang }: Props) {
             href={getWhatsAppUrl(waMessage)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 bg-white text-foreground px-6 py-3.5 text-sm font-medium tracking-wide uppercase hover:bg-white/90 transition-colors duration-200 shadow-md"
+            className="hidden md:inline-flex items-center gap-3 bg-white text-foreground px-6 py-3.5 text-sm font-medium tracking-wide uppercase hover:bg-white/90 transition-colors duration-200 shadow-md"
           >
             {dict.hero.cta}
             <ArrowRight size={16} />
