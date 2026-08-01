@@ -9,11 +9,11 @@ type Props = {
 };
 
 const roomImages = [
-  {src: "/img/rooms/22.jpg",},
-  {src: "/img/rooms/23.jpg",},
-  {src: "/img/rooms/20.jpg",},
-  {src: "/img/rooms/7.jpg",},
-  {src: "/img/rooms/15.jpg",},
+  {src: "/img/rooms/22.webp",},
+  {src: "/img/rooms/23.webp",},
+  {src: "/img/rooms/20.webp",},
+  {src: "/img/rooms/7.webp",},
+  {src: "/img/rooms/15.webp",},
 ];
 
 export default function AboutSection({ dict }: Props) {
@@ -67,6 +67,7 @@ export default function AboutSection({ dict }: Props) {
               <motion.img
                 key={currentIndex}
                 src={roomImages[currentIndex].src}
+                alt="Kasilapa Bay Room Photo"
                 initial={{ x: "100%" }}
                 animate={{ x: "0%" }}
                 exit={{ x: "-100%" }}

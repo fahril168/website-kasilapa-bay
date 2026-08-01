@@ -12,9 +12,9 @@ type Props = {
 };
 
 const destinationImages = [
-  "/img/destinations/kahianga.png", // Kahianga
-  "/img/destinations/huntete.png", // Huntete
-  "/img/destinations/roma.png" // Roma
+  "/img/destinations/kahianga.webp", // Kahianga
+  "/img/destinations/huntete.webp", // Huntete
+  "/img/destinations/roma.webp" // Roma
 ];
 
 export default function FeaturedDestinations({ dict, lang }: Props) {

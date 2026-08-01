@@ -23,7 +23,7 @@ export default function HeroSection({ dict, lang }: Props) {
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: "url('/img/hero.png')",
+            backgroundImage: "url('/img/hero.webp')",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}

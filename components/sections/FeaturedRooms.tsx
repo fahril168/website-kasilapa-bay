@@ -48,10 +48,10 @@ export default function FeaturedRooms({ dict, lang }: Props) {
                       style={{
                         backgroundImage: `url('${
                           i === 0
-                            ? "/img/rooms/6.jpg"
+                            ? "/img/rooms/6.webp"
                             : i === 1
-                            ? "/img/rooms/12.jpg"
-                            : "/img/rooms/3.jpg"
+                            ? "/img/rooms/12.webp"
+                            : "/img/rooms/3.webp"
                         }')`,
                         backgroundSize: "cover",
                         backgroundPosition: "center",

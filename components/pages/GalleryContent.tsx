@@ -11,15 +11,15 @@ type Props = {
 };
 
 const galleryImages = [
-  { src: "/img/rooms/6.jpg", category: "property", alt: "Deluxe Junior Suite" },
-  { src: "/img/rooms/12.jpg", category: "property", alt: "Deluxe Room" },
-  { src: "/img/rooms/3.jpg", category: "property", alt: "Deluxe Double" },
-  { src: "/img/destinations/hondue.png", category: "island", alt: "Pantai Hondue" },
-  { src: "/img/destinations/kahianga.png", category: "island", alt: "Puncak Kahianga" },
-  { src: "/img/destinations/roma.png", category: "underwater", alt: "Spot Diving Roma" },
-  { src: "/img/destinations/nata.png", category: "island", alt: "Benteng Nata" },
-  { src: "/img/destinations/huntete.png", category: "island", alt: "Pantai Huntete" },
-  { src: "/img/destinations/patua.png", category: "island", alt: "Benteng Patua" },
+  { src: "/img/rooms/6.webp", category: "property", alt: "Deluxe Junior Suite" },
+  { src: "/img/rooms/12.webp", category: "property", alt: "Deluxe Room" },
+  { src: "/img/rooms/3.webp", category: "property", alt: "Deluxe Double" },
+  { src: "/img/destinations/hondue.webp", category: "island", alt: "Pantai Hondue" },
+  { src: "/img/destinations/kahianga.webp", category: "island", alt: "Puncak Kahianga" },
+  { src: "/img/destinations/roma.webp", category: "underwater", alt: "Spot Diving Roma" },
+  { src: "/img/destinations/nata.webp", category: "island", alt: "Benteng Nata" },
+  { src: "/img/destinations/huntete.webp", category: "island", alt: "Pantai Huntete" },
+  { src: "/img/destinations/patua.webp", category: "island", alt: "Benteng Patua" },
 ];
 
 type FilterKey = "all" | "property" | "underwater" | "island" | "dining";
@@ -113,7 +113,7 @@ export default function GalleryContent({ dict }: Props) {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               src={filtered[lightbox]?.src}
-              alt={filtered[lightbox]?.alt}
+              alt={filtered[lightbox]?.alt || "Kasilapa Bay Gallery Image"}
               className="max-w-full max-h-[85vh] object-contain rounded-xs"
               onClick={(e) => e.stopPropagation()}
             />

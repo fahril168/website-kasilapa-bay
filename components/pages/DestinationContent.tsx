@@ -10,12 +10,12 @@ type Props = {
 };
 
 const destinationImages = [
-  "/img/destinations/hondue.png", // Pantai Hondue
-  "/img/destinations/kahianga.png", // Puncak Kahianga
-  "/img/destinations/roma.png", // Roma
-  "/img/destinations/nata.png", // Benteng Nata
-  "/img/destinations/huntete.png", // Pantai huntete
-  "/img/destinations/patua.png" // Benteng Patua
+  "/img/destinations/hondue.webp", // Pantai Hondue
+  "/img/destinations/kahianga.webp", // Puncak Kahianga
+  "/img/destinations/roma.webp", // Roma
+  "/img/destinations/nata.webp", // Benteng Nata
+  "/img/destinations/huntete.webp", // Pantai huntete
+  "/img/destinations/patua.webp" // Benteng Patua
 ];
 
 export default function DestinationContent({ dict }: Props) {
