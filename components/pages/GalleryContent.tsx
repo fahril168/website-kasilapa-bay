@@ -37,7 +37,7 @@ export default function GalleryContent({ dict }: Props) {
 
   return (
     <>
-      <section className="section-padding bg-white">
+      <section className="pt-16 section-padding bg-white">
         <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
           <SectionHeader
             title={dict.gallery.title}

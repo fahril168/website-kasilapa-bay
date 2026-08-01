@@ -39,7 +39,7 @@ export default async function LangLayout({ children, params }: Props) {
   return (
     <>
       <Header lang={locale} dict={dict} />
-      <main className="flex-1 pt-16">{children}</main>
+      <main className="flex-1">{children}</main>
       <Footer lang={locale} dict={dict} />
     </>
   );

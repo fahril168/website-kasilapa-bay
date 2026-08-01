@@ -13,7 +13,7 @@ type Props = {
 
 export default function ContactContent({ dict }: Props) {
   return (
-    <section className="section-padding bg-white">
+    <section className="pt-16 section-padding bg-white">
       <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         <SectionHeader
           title={dict.contact.title}

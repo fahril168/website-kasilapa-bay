@@ -13,7 +13,7 @@ export default function ReviewsContent({ dict }: Props) {
   const reviews = dict.reviews.items;
 
   return (
-    <section className="section-padding bg-white">
+    <section className="pt-16 section-padding bg-white">
       <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         <SectionHeader
           title={dict.reviews.title}
