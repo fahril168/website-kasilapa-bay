@@ -18,7 +18,7 @@ export default function HeroSection({ dict, lang }: Props) {
       : "Hello, I'm interested in staying at Kasilapa Bay. Could you let me know about room availability?";
 
   return (
-    <section className="relative h-[100svh] min-h-[600px] flex items-end pb-12 sm:pb-16 lg:pb-20">
+    <section className="relative h-[100svh] min-h-[600px] flex items-end pb-12 sm:pb-16 lg:pb-20 -mt-16">
       {/* Background image */}
       <div className="absolute inset-0 bg-slate-900">
         <Image
