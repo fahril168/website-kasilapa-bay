@@ -18,7 +18,7 @@ export default function HeroSection({ dict, lang }: Props) {
       : "Hello, I'm interested in staying at Kasilapa Bay. Could you let me know about room availability?";
 
   return (
-    <section className="relative h-screen min-h-[600px] flex items-end md:items-center pb-12 sm:pb-16 md:pb-0">
+    <section className="relative h-screen min-h-[600px] flex items-end md:items-center pb-20 sm:pb-24 md:pb-0">
       {/* Background image */}
       <div className="absolute inset-0 bg-slate-900">
         <Image
@@ -43,7 +43,7 @@ export default function HeroSection({ dict, lang }: Props) {
           className="max-w-xl text-right flex flex-col items-end md:text-left md:items-start"
         >
           <h1
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-[1.1] mb-4 sm:mb-6 font-serif"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-[1.15] mb-4 sm:mb-6 font-serif whitespace-pre-line"
             style={{ color: "#ffffff" }}
           >
             {dict.hero.tagline}
