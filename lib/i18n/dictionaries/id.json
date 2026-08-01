@@ -1,0 +1,175 @@
+{
+  "meta": {
+    "title": "Kasilapa Bay — Penginapan Tepi Pantai di Tomia, Wakatobi",
+    "description": "Penginapan tenang di tepi pantai Pulau Tomia, Wakatobi. Nikmati keindahan bawah laut, pantai pasir putih, dan keramahan lokal."
+  },
+  "nav": {
+    "home": "Beranda",
+    "accommodation": "Akomodasi",
+    "destination": "Destinasi",
+    "gallery": "Galeri",
+    "reviews": "Ulasan",
+    "contact": "Kontak"
+  },
+  "hero": {
+    "tagline": "Tenang di Tepi Laut Wakatobi",
+    "subtitle": "Penginapan sederhana di Pulau Tomia, Wakatobi. Tempat di mana laut jernih bertemu keramahan hangat.",
+    "cta": "Pesan via WhatsApp"
+  },
+  "about": {
+    "headline": "Kenyamanan Terbaik di Pulau Tomia",
+    "description": "Kasilapa Bay adalah akomodasi pilihan di Wakatobi yang memadukan kenyamanan istirahat, pelayanan ramah, dan harga yang bersahabat. Baik Anda seorang backpacker, pelancong solo, pasangan yang mencari suasana romantis, maupun keluarga yang berlibur bersama, Kasilapa Bay menghadirkan suasana hangat serasa di rumah sendiri."
+  },
+  "accommodation": {
+    "title": "Akomodasi",
+    "subtitle": "Kamar nyaman dengan pemandangan langsung ke laut biru Wakatobi.",
+    "perNight": "/ malam",
+    "guests": "tamu",
+    "bookCta": "Pesan via WA",
+    "facilities": "Fasilitas",
+    "facilitiesList": {
+      "wifi": "WiFi Gratis",
+      "breakfast": "Sarapan Lokal",
+      "car": "Sewa Mobil",
+      "bike": "Sewa Motor",
+      "parking": "Parkir",
+      "laundry": "Laundry",
+      "electricity": "Listrik 24 Jam",
+      "water": "Air Bersih"
+    },
+    "rooms": [
+      {
+        "name": "Deluxe Junior Suite",
+        "description": "Tipe kamar ini merupakan opsi paling ekonomis, biasanya ditujukan untuk solo traveler atau dua orang yang menginginkan akomodasi standar.",
+        "capacity": 2,
+        "bed": "1 Queen Bed atau 2 Twin Beds",
+        "view": "Pemandangan Bukit",
+        "price": 250000
+      },
+      {
+        "name": "Deluxe Room",
+        "description": "Tipe kamar menengah dengan ukuran ruang yang sedikit lebih lapang dan penataan yang lebih nyaman untuk beristirahat setelah seharian menyelam.",
+        "capacity": 2,
+        "bed": "1 Queen Bed",
+        "view": "Pemandangan Laut",
+        "price": 300000
+      },
+      {
+        "name": "Deluxe Double",
+        "description": "Tipe kamar terbaik di Kasilapa Bay yang paling direkomendasikan karena menawarkan posisi dan pemandangan terbaik langsung menghadap teluk.",
+        "capacity": 3,
+        "bed": "1 King Bed",
+        "view": "Pemandangan Laut",
+        "price": 350000
+      }
+    ]
+  },
+  "destination": {
+    "title": "Destinasi Sekitar",
+    "subtitle": "Jelajahi keajaiban alam dan budaya di sekitar Pulau Tomia.",
+    "distance": "jarak",
+    "places": [
+      {
+        "name": "Pantai Hondue",
+        "category": "Pantai ",
+        "description": "Pantai ini memiliki pantai pasir putih yang membentang sepanjang 200 meter. Posisinya yang menghadap ke barat menawarkan pemandangan matahari tenggelam yang sayang dilewatkan.",
+        "distance": "5 menit berkendara"
+      },
+      {
+        "name": "Puncak Kahianga",
+        "category": "Pemandangan Alam",
+        "description": "Titik tertinggi di Tomia dengan panorama 360° — laut biru tak berujung, desa-desa kecil, dan hutan tropis yang hijau.",
+        "distance": "10 menit berkendara"
+      },
+      {
+        "name": "Roma",
+        "category": "Diving",
+        "description": "Salah satu dinding selam paling terkenal di dunia. Terumbu vertikal yang menurun hingga kedalaman 80 meter, dipenuhi kehidupan laut.",
+        "distance": "10 menit perahu"
+      },
+      {
+        "name": "Benteng Nata",
+        "category": "Sejarah & Budaya",
+        "description": "Benteng kuno peninggalan Kerajaan Buton yang masih berdiri kokoh. Bukti sejarah maritim nusantara di pulau kecil ini.",
+        "distance": "20 menit berkendara"
+      },
+      {
+        "name": "Pantai Huntete",
+        "category": "Pantai",
+        "description": "Terletak di ujung timur Pulau Tomia. Memiliki hamparan pasir putih dan air laut yang jernih.  Jika beruntung wisatawan juga bisa menyaksikan ikan paus berenang tidak jauh dari pantai.",
+        "distance": "20 menit berkendara"
+      },
+      {
+        "name": "Benteng Patua",
+        "category": "Sejarah & Budaya",
+        "description": "Situs bersejarah peninggalan masa kerajaan di puncak bukit Pulau Tomia, Wakatobi. Selain bernilai sejarah, tempat ini menyajikan pemandangan alam ke arah perbukitan dan laut, sehingga cocok untuk berwisata, menikmati udara segar, dan berfoto.",
+        "distance": "18 menit berkendara"
+      }
+    ]
+  },
+  "gallery": {
+    "title": "Galeri",
+    "subtitle": "Sekilas tentang keindahan Kasilapa Bay dan sekitarnya.",
+    "filters": {
+      "all": "Semua",
+      "property": "Penginapan",
+      "underwater": "Bawah Laut",
+      "island": "Pulau",
+      "dining": "Kuliner"
+    }
+  },
+  "reviews": {
+    "title": "Ulasan Tamu",
+    "subtitle": "Apa kata mereka yang telah menginap di Kasilapa Bay.",
+    "items": [
+      {
+        "name": "Putri Kitnas ",
+        "origin": "Depok, Indonesia",
+        "rating": 5,
+        "comment": "Rasanya seperti di rumah. Ibu dan Bapak Haji menjadikan kami seperti mengunjungi keluarga daripada menginap di hotel. Saya memiliki harapan yang rendah sebelum datang, namun tempat ini sangat cocok dalam hal kebersihan, kenyamanan, lokasi, dan makanan."
+      },
+      {
+        "name": "Lelie Liana",
+        "origin": "Bali, Indonesia",
+        "rating": 5,
+        "comment": "Hotelnya nyaman. Kamarnya luas. Lokasi hotelnya juga di tempat yang seoi dan tidak ramai jalur kendaraan. Kamar di ujung sangat luas dan menghadap laut. Udara dan angin banyak. Saya sangat suka. Masakan Ibu pemilik hotel sangat enak. Ibunya sangat baik."
+      },
+      {
+        "name": "famokossatour",
+        "origin": "-",
+        "rating": 5,
+        "comment": "Jika anda sedang merencanakan untuk berlibur atau akan berwisata di Pulau Tomia, Kasilapa Bay Hotel menjadi rekomendasi utama untuk akomodasi selama berada di sana. Selain kenyamanan serta keramahan pelayanan, Kasilapa Bay Hotel juga menawarkan pemandangan yang indah serta lokasinya yang strategis tepat di teluk Kasilapa."
+      },
+      {
+        "name": "Anne Mbouw",
+        "origin": "-",
+        "rating": 5,
+        "comment": "Langsung dijemput dari pelabuhan, kamar bersih & nyaman, serta suasana sore di halaman belakang sungguh indah. Penginapan ini seperti rumah sendiri, dengan teras santai, lokasi strategis ke pasar dan snorkeling, plus ada souvenir handycraft lokal. Tuan rumahnya sangat ramah, kami foto bersama sebelum pulang dan pasti akan kembali lagi."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Hubungi Kami",
+    "subtitle": "Siap merencanakan liburan Anda ke Kasilapa Bay? Hubungi kami langsung.",
+    "whatsapp": "Chat via WhatsApp",
+    "whatsappMessage": "Halo, saya tertarik untuk menginap di Kasilapa Bay. Bisa tolong informasikan ketersediaan kamar?",
+    "phone": "Telepon",
+    "email": "Email",
+    "address": "Alamat",
+    "addressValue": "Desa Kasilapa, Pulau Tomia, Kabupaten Wakatobi, Sulawesi Tenggara, Indonesia",
+    "findUs": "Temukan Kami"
+  },
+  "footer": {
+    "description": "Penginapan tepi pantai yang tenang di Pulau Tomia, Wakatobi. Tempat di mana keindahan laut bertemu keramahan lokal.",
+    "quickLinks": "Tautan Cepat",
+    "contactInfo": "Kontak",
+    "followUs": "Ikuti Kami",
+    "rights": "Hak cipta dilindungi."
+  },
+  "common": {
+    "bookNow": "Pesan Sekarang",
+    "learnMore": "Selengkapnya",
+    "viewAll": "Lihat Semua",
+    "currency": "IDR"
+  }
+}

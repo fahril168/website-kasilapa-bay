@@ -1,0 +1,175 @@
+{
+  "meta": {
+    "title": "Kasilapa Bay — Beachfront Homestay in Tomia, Wakatobi",
+    "description": "A peaceful beachfront homestay on Tomia Island, Wakatobi. Discover pristine reefs, white sand beaches, and genuine local hospitality."
+  },
+  "nav": {
+    "home": "Home",
+    "accommodation": "Rooms",
+    "destination": "Explore",
+    "gallery": "Gallery",
+    "reviews": "Reviews",
+    "contact": "Contact"
+  },
+  "hero": {
+    "tagline": "Tranquility by the Wakatobi Sea",
+    "subtitle": "A simple homestay in Tomia, Wakatobi. where crystal-clear waters meet warm hospitality.",
+    "cta": "Book via WhatsApp"
+  },
+  "about": {
+    "headline": "Ultimate Comfort in Tomia Island",
+    "description": "Kasilapa Bay is the best accommodation in Wakatobi, blending restful comfort, friendly service, and affordable pricing. Whether you are a backpacker, solo traveler, couple seeking romantic tranquility, or a family vacationing together, Kasilapa Bay brings a warm home-away-from-home atmosphere."
+  },
+  "accommodation": {
+    "title": "Accommodation",
+    "subtitle": "Comfortable rooms with direct views of the Wakatobi blue.",
+    "perNight": "/ night",
+    "guests": "guests",
+    "bookCta": "Book via WA",
+    "facilities": "Facilities",
+    "facilitiesList": {
+      "wifi": "Free WiFi",
+      "breakfast": "Local Breakfast",
+      "car": "Car",
+      "bike": "Bike",
+      "parking": "Parking",
+      "laundry": "Laundry",
+      "electricity": "Electricity",
+      "water": "Clean Water"
+    },
+    "rooms": [
+      {
+        "name": "Deluxe Junior Suite",
+        "description": "This room type is the most economical option, usually intended for solo travelers or couples who want standard accommodation.",
+        "capacity": 2,
+        "bed": "1 Queen Bed or 2 Twin Beds",
+        "view": "Hill View",
+        "price": 250000
+      },
+      {
+        "name": "Deluxe Room",
+        "description": "A mid-range room type with slightly more spacious dimensions and more comfortable furnishings for resting after a full day of diving.",
+        "capacity": 2,
+        "bed": "1 Queen Bed",
+        "view": "Ocean View",
+        "price": 300000
+      },
+      {
+        "name": "Deluxe Double",
+        "description": "The best room type at Kasilapa Bay, highly recommended as it offers the best position and view directly overlooking the bay.",
+        "capacity": 3,
+        "bed": "1 King Bed",
+        "view": "Ocean View",
+        "price": 350000
+      }
+    ]
+  },
+  "destination": {
+    "title": "Nearby Destinations",
+    "subtitle": "Explore the natural wonders and cultural heritage around Tomia Island.",
+    "distance": "distance",
+    "places": [
+      {
+        "name": "Hondue Beach",
+        "category": "Beach",
+        "description": "Just a 5-minute drive from Kasilapa Bay. This beach has calm, clear water and fine white sand, making it perfect for swimming and enjoying the sunset.",
+        "distance": "5 min drive"
+      },
+      {
+        "name": "Kahianga Peak",
+        "category": "Scenic Views",
+        "description": "The highest point on Tomia with a 360° panorama — endless blue ocean, small villages, and lush tropical forest.",
+        "distance": "15 min drive"
+      },
+      {
+        "name": "Roma",
+        "category": "Diving",
+        "description": "One of the world's most famous wall dives. A vertical reef dropping to 80 meters, teeming with marine life.",
+        "distance": "10 min by boat"
+      },
+      {
+        "name": "Nata Fortress",
+        "category": "History & Culture",
+        "description": "An ancient fortress from the Buton Kingdom, still standing strong. A testament to the island's maritime heritage.",
+        "distance": "20 min drive"
+      },
+      {
+        "name": "Huntete Beach",
+        "category": "Beach",
+        "description": "Located in the eastern part of Tomia Island. It has white sand and clear sea water. If you are lucky, tourists can also see whales swimming not far from the beach.",
+        "distance": "20 min drive"
+      },
+      {
+        "name": "Patua Fortress",
+        "category": "History & Culture",
+        "description": "Patua Fortress is one of the historical fortresses that must be visited when in Tomia Island, Wakatobi. Located on a hilltop, this fortress offers a stunning 360-degree panorama from green hills to the vast blue ocean. Built during the kingdom era, Patua Fortress stands as a silent witness to the long history of civilization in Wakatobi. Today, visitors can walk around the fortress area, enjoy the fresh air, and capture moments with a beautiful natural landscape background.",
+        "distance": "18 min drive"
+      }
+    ]
+  },
+  "gallery": {
+    "title": "Gallery",
+    "subtitle": "A glimpse of the beauty of Kasilapa Bay and its surroundings.",
+    "filters": {
+      "all": "All",
+      "property": "Property",
+      "underwater": "Underwater",
+      "island": "Island",
+      "dining": "Dining"
+    }
+  },
+  "reviews": {
+    "title": "Guest Reviews",
+    "subtitle": "What our guests say about their stay at Kasilapa Bay.",
+    "items": [
+      {
+        "name": "Andi Pratama",
+        "origin": "Jakarta, Indonesia",
+        "rating": 5,
+        "comment": "Incredibly peaceful. The reef is right in front of the homestay. The host is very friendly and the food is authentic. Will definitely return."
+      },
+      {
+        "name": "Sarah Mitchell",
+        "origin": "Melbourne, Australia",
+        "rating": 5,
+        "comment": "One of the best places I've ever visited. Crystal-clear water, healthy coral reefs, and a tranquility that's hard to find anywhere else."
+      },
+      {
+        "name": "Budi Setiawan",
+        "origin": "Surabaya, Indonesia",
+        "rating": 4,
+        "comment": "A truly memorable stay. The kids loved snorkeling right from the beach. Simple facilities but clean and comfortable."
+      },
+      {
+        "name": "Yuki Tanaka",
+        "origin": "Osaka, Japan",
+        "rating": 5,
+        "comment": "Diving at Roma Wall is unmatched. And coming back to Kasilapa Bay after a dive feels like coming home. A very special place."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Ready to plan your getaway to Kasilapa Bay? Reach out to us directly.",
+    "whatsapp": "Chat via WhatsApp",
+    "whatsappMessage": "Hello, I'm interested in staying at Kasilapa Bay. Could you let me know about room availability?",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "addressValue": "Kasilapa Village, Tomia Island, Wakatobi Regency, Southeast Sulawesi, Indonesia",
+    "findUs": "Find Us"
+  },
+  "footer": {
+    "description": "A peaceful beachfront homestay on Tomia Island, Wakatobi. Where the beauty of the sea meets genuine local hospitality.",
+    "quickLinks": "Quick Links",
+    "contactInfo": "Contact",
+    "followUs": "Follow Us",
+    "rights": "All rights reserved."
+  },
+  "common": {
+    "bookNow": "Book Now",
+    "learnMore": "Learn More",
+    "viewAll": "View All",
+    "currency": "IDR"
+  }
+}
