@@ -48,7 +48,7 @@ export default function HeroSection({ dict, lang }: Props) {
             {dict.hero.tagline}
           </h1>
           <p
-            className="text-white/90 text-sm sm:text-base lg:text-lg leading-relaxed mb-0 md:mb-10 max-w-md text-left"
+            className="text-white/90 text-sm sm:text-base lg:text-lg leading-relaxed mb-0 md:mb-10 max-w-[82%] sm:max-w-md text-left"
             style={{ color: "#ffffff" }}
           >
             {dict.hero.subtitle}
