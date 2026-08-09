@@ -41,15 +41,14 @@ export default function DestinationContent({ dict }: Props) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-20px" }}
               transition={{ duration: 0.5, ease: "easeOut", delay: (i % 3) * 0.1 }}
-              className={`group relative rounded-xl overflow-hidden cursor-pointer block ${
-                i === 0
+              className={`group relative rounded-xl overflow-hidden cursor-pointer block ${i === 0
                   ? "sm:col-span-2 lg:col-span-2 aspect-[16/9]"
                   : i === 1
-                  ? "aspect-[4/3] lg:aspect-[8/9]"
-                  : i === 6
-                  ? "sm:col-span-2 lg:col-span-2 aspect-[16/9] lg:aspect-[8/3]"
-                  : "aspect-[4/3]"
-              }`}
+                    ? "aspect-[4/3] lg:aspect-[8/9]"
+                    : i === 6
+                      ? "sm:col-span-2 lg:col-span-2 aspect-[16/9] lg:aspect-[8/3]"
+                      : "aspect-[4/3]"
+                }`}
             >
               {/* Image */}
               <div
