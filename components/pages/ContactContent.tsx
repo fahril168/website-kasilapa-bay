@@ -13,9 +13,10 @@ type Props = {
 
 export default function ContactContent({ dict }: Props) {
   return (
-    <section className="pt-16 section-padding bg-white">
+    <section className="pt-16 section-padding bg-background">
       <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         <SectionHeader
+          label="Kasilapa Bay"
           title={dict.contact.title}
           subtitle={dict.contact.subtitle}
         />
@@ -26,24 +27,22 @@ export default function ContactContent({ dict }: Props) {
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="space-y-8"
           >
-            <div className="bg-slate-50 p-6 sm:p-8 border border-slate-200 rounded-sm">
-              <h3
-                className="text-2xl font-bold text-slate-900 mb-3"
-                style={{ fontFamily: "var(--font-serif)" }}
-              >
+            {/* WhatsApp CTA Card */}
+            <div className="bg-surface p-6 sm:p-8 border border-border rounded-xl">
+              <h3 className="text-2xl font-bold text-foreground mb-3 font-serif">
                 {dict.contact.whatsapp}
               </h3>
-              <p className="text-slate-700 text-sm leading-relaxed mb-6 font-normal">
+              <p className="text-muted text-sm leading-relaxed mb-6 font-normal">
                 {dict.contact.subtitle}
               </p>
               <a
                 href={getWhatsAppUrl(dict.contact.whatsappMessage)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 sm:gap-3 bg-ocean-deep text-white px-5 sm:px-6 py-3 sm:py-3.5 text-xs sm:text-sm font-semibold tracking-wide uppercase hover:bg-ocean transition-colors duration-200 rounded-xs"
+                className="btn-gold text-xs"
               >
                 <MessageSquare size={18} />
                 {dict.contact.whatsapp}
@@ -51,20 +50,21 @@ export default function ContactContent({ dict }: Props) {
               </a>
             </div>
 
+            {/* Contact Info */}
             <div className="space-y-6 px-2">
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-slate-100 border border-slate-200 text-ocean-deep rounded-xs">
+                <div className="p-3 bg-gold-light border border-border-light text-gold rounded-lg">
                   <Phone size={20} />
                 </div>
                 <div>
-                  <p className="text-xs uppercase font-bold tracking-wider text-slate-500 mb-1">
+                  <p className="text-xs uppercase font-bold tracking-wider text-muted-light mb-1">
                     {dict.contact.phone}
                   </p>
                   <a
                     href={`https://wa.me/${WHATSAPP_NUMBER}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-slate-900 text-base font-bold hover:text-ocean-deep transition-colors"
+                    className="text-foreground text-base font-bold hover:text-accent transition-colors"
                   >
                     +62 821-1234-5678
                   </a>
@@ -72,16 +72,16 @@ export default function ContactContent({ dict }: Props) {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-slate-100 border border-slate-200 text-ocean-deep rounded-xs">
+                <div className="p-3 bg-gold-light border border-border-light text-gold rounded-lg">
                   <Mail size={20} />
                 </div>
                 <div>
-                  <p className="text-xs uppercase font-bold tracking-wider text-slate-500 mb-1">
+                  <p className="text-xs uppercase font-bold tracking-wider text-muted-light mb-1">
                     {dict.contact.email}
                   </p>
                   <a
                     href="mailto:hello@kasilapabay.com"
-                    className="text-slate-900 text-base font-bold hover:text-ocean-deep transition-colors"
+                    className="text-foreground text-base font-bold hover:text-accent transition-colors"
                   >
                     hello@kasilapabay.com
                   </a>
@@ -89,14 +89,14 @@ export default function ContactContent({ dict }: Props) {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-slate-100 border border-slate-200 text-ocean-deep rounded-xs">
+                <div className="p-3 bg-gold-light border border-border-light text-gold rounded-lg">
                   <MapPin size={20} />
                 </div>
                 <div>
-                  <p className="text-xs uppercase font-bold tracking-wider text-slate-500 mb-1">
+                  <p className="text-xs uppercase font-bold tracking-wider text-muted-light mb-1">
                     {dict.contact.address}
                   </p>
-                  <p className="text-slate-800 text-sm leading-relaxed font-medium">
+                  <p className="text-foreground text-sm leading-relaxed font-medium">
                     {dict.contact.addressValue}
                   </p>
                 </div>
@@ -104,13 +104,13 @@ export default function ContactContent({ dict }: Props) {
             </div>
           </motion.div>
 
-          {/* Interactive Google Map Embed */}
+          {/* Map */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="h-[300px] sm:h-[400px] lg:h-[450px] bg-slate-100 border border-slate-200 rounded-sm overflow-hidden relative"
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="h-[300px] sm:h-[400px] lg:h-[480px] bg-surface border border-border rounded-xl overflow-hidden relative"
           >
             <iframe
               title="Kasilapa Bay Location Map"

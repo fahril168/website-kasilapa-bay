@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, MapPin } from "lucide-react";
-import SectionHeader from "@/components/SectionHeader";
 import type { Locale, Dictionary } from "@/lib/i18n";
 
 type Props = {
@@ -12,72 +11,73 @@ type Props = {
 };
 
 const destinationImages = [
-  "/img/destinations/kahianga.webp", // Kahianga
-  "/img/destinations/huntete.webp", // Huntete
-  "/img/destinations/roma.webp" // Roma
+  "/img/destinations/kahianga.webp",
+  "/img/destinations/huntete.webp",
+  "/img/destinations/roma.webp",
 ];
 
 export default function FeaturedDestinations({ dict, lang }: Props) {
   const places = dict.destination.places.slice(0, 3);
 
   return (
-    <section className="section-padding bg-slate-50 border-t border-b border-slate-200">
+    <section className="section-padding bg-background">
       <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
-        <SectionHeader
-          title={dict.destination.title}
-          subtitle={dict.destination.subtitle}
-        />
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="text-center max-w-2xl mx-auto mb-12 lg:mb-16"
+        >
+          <span className="label-accent">{dict.destination.title}</span>
+          <h2 className="text-3xl md:text-4xl lg:text-[2.75rem] font-bold text-foreground leading-[1.15] mb-4 tracking-tight">
+            {dict.destination.subtitle}
+          </h2>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Bento Grid: first item large, rest smaller */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {places.map((place, i) => (
             <motion.div
               key={place.name}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              whileHover={{ y: -6 }}
               viewport={{ once: true, margin: "-20px" }}
-              transition={{ duration: 0.5, ease: "easeOut", delay: i * 0.1 }}
-              className="group bg-white border border-slate-200 hover:border-ocean-deep/40 rounded-sm overflow-hidden flex flex-col justify-between shadow-xs hover:shadow-xl transition-colors transition-shadow duration-300"
+              transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.1 }}
+              className={`group relative rounded-xl overflow-hidden cursor-pointer ${
+                i === 0
+                  ? "md:col-span-2 lg:col-span-2 aspect-[16/9] md:aspect-[2/1]"
+                  : "aspect-[4/3]"
+              }`}
             >
-              <div>
-                {/* Destination Image with Zoom on Hover */}
-                <div className="aspect-[16/10] bg-slate-100 relative overflow-hidden">
-                  <div
-                    className="w-full h-full group-hover:scale-108 transition-transform duration-700 ease-out"
-                    style={{
-                      backgroundImage: `url('${destinationImages[i] || destinationImages[0]}')`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                  />
-                  <div className="absolute top-3 left-3 z-10">
-                    <span className="text-[11px] font-bold tracking-wider uppercase text-ocean-deep bg-white/95 backdrop-blur-xs px-2.5 py-1 border border-slate-200 shadow-2xs">
-                      {place.category}
-                    </span>
-                  </div>
-                </div>
+              {/* Image */}
+              <div
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
+                style={{
+                  backgroundImage: `url('${destinationImages[i] || destinationImages[0]}')`,
+                }}
+              />
 
-                {/* Content */}
-                <div className="p-5 sm:p-6">
-                  <div className="flex items-center justify-between gap-2 mb-2.5">
-                    <h3
-                      className="text-xl lg:text-2xl font-bold text-slate-900 group-hover:text-ocean-deep transition-colors duration-200"
-                      style={{ fontFamily: "var(--font-serif)" }}
-                    >
-                      {place.name}
-                    </h3>
-                  </div>
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1a1714]/80 via-[#1a1714]/20 to-transparent" />
 
-                  <p className="text-slate-700 text-sm leading-relaxed font-normal mb-4">
-                    {place.description}
-                  </p>
-                </div>
+              {/* Category badge */}
+              <div className="absolute top-4 left-4 z-10">
+                <span className="text-[10px] sm:text-[11px] font-bold tracking-wider uppercase text-white bg-gold/90 backdrop-blur-sm px-3 py-1.5 rounded-full">
+                  {place.category}
+                </span>
               </div>
 
-              {/* Footer Distance Badge */}
-              <div className="px-6 pb-5 pt-2 border-t border-slate-100 flex items-center justify-between bg-slate-50/50">
-                <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-                  <MapPin size={13} className="text-ocean-deep" />
+              {/* Content overlay */}
+              <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 z-10">
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white font-serif mb-2 group-hover:text-gold transition-colors duration-300">
+                  {place.name}
+                </h3>
+                <p className="text-white/70 text-sm leading-relaxed mb-3 max-w-md line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  {place.description}
+                </p>
+                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/60">
+                  <MapPin size={12} className="text-gold" />
                   {place.distance}
                 </span>
               </div>
@@ -85,10 +85,11 @@ export default function FeaturedDestinations({ dict, lang }: Props) {
           ))}
         </div>
 
+        {/* View All link */}
         <div className="text-center mt-12">
           <Link
             href={`/${lang}/destinasi`}
-            className="inline-flex items-center gap-2 text-sm font-bold text-slate-800 hover:text-ocean-deep transition-colors duration-200 tracking-wide uppercase group"
+            className="btn-outline group"
           >
             <span>{dict.common.viewAll}</span>
             <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-200" />

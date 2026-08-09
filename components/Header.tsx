@@ -34,16 +34,17 @@ export default function Header({ lang, dict }: HeaderProps) {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 20);
     };
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
 
   const otherLang = lang === "id" ? "en" : "id";
   const switchedPath = pathname.replace(`/${lang}`, `/${otherLang}`);
@@ -52,27 +53,31 @@ export default function Header({ lang, dict }: HeaderProps) {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isTransparent
-          ? "bg-gradient-to-b from-slate-950/70 via-slate-950/30 to-transparent border-b border-transparent text-white"
-          : "bg-white/95 backdrop-blur-sm border-b border-border shadow-xs text-slate-900"
+          ? "bg-transparent text-white"
+          : "bg-background/95 backdrop-blur-md border-b border-border text-foreground shadow-sm"
       }`}
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex h-[4.25rem] items-center justify-between">
           {/* Logo */}
           <Link
             href={`/${lang}`}
-            className={`text-lg font-bold tracking-[0.18em] uppercase transition-colors duration-300 ${
-              isTransparent ? "text-white" : "text-slate-900"
-            }`}
-            style={{ fontFamily: "var(--font-sans)" }}
+            className="flex items-center gap-2 group"
           >
-            Kasilapa Bay
+            <span
+              className={`text-lg font-bold tracking-[0.15em] uppercase transition-colors duration-300 ${
+                isTransparent ? "text-white" : "text-foreground"
+              }`}
+              style={{ fontFamily: "var(--font-serif)" }}
+            >
+              Kasilapa Bay
+            </span>
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-1">
             {navKeys.map(({ key, href }) => {
               const fullHref = `/${lang}${href}`;
               const isActive =
@@ -84,57 +89,58 @@ export default function Header({ lang, dict }: HeaderProps) {
                 <Link
                   key={key}
                   href={fullHref}
-                  className={`text-[13px] tracking-wide uppercase transition-colors duration-200 ${
+                  className={`relative text-[13px] tracking-wide uppercase px-3.5 py-2 rounded-sm transition-colors duration-200 ${
                     isActive
                       ? isTransparent
-                        ? "text-white font-bold border-b-2 border-white pb-0.5"
-                        : "text-ocean-deep font-bold border-b-2 border-ocean-deep pb-0.5"
+                        ? "text-white font-bold"
+                        : "text-accent font-bold"
                       : isTransparent
-                      ? "text-white/80 font-semibold hover:text-white"
-                      : "text-slate-600 font-semibold hover:text-slate-900"
+                      ? "text-white/70 font-medium hover:text-white"
+                      : "text-muted font-medium hover:text-foreground"
                   }`}
                 >
                   {dict.nav[key as keyof typeof dict.nav]}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeNavIndicator"
+                      className={`absolute bottom-0 left-3.5 right-3.5 h-0.5 rounded-full ${
+                        isTransparent ? "bg-gold" : "bg-gold"
+                      }`}
+                      transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
                 </Link>
               );
             })}
           </nav>
 
-          {/* Right side: Language Switcher + Mobile Toggle */}
-          <div className="flex items-center gap-4">
+          {/* Right side */}
+          <div className="flex items-center gap-3">
             {/* Language Switcher */}
             <Link
               href={switchedPath}
-              className={`flex items-center gap-1.5 text-[13px] tracking-wide uppercase px-3 py-1.5 transition-colors duration-200 rounded-xs border ${
+              className={`flex items-center gap-1.5 text-[13px] tracking-wide uppercase px-3 py-1.5 transition-all duration-200 rounded-full border ${
                 isTransparent
-                  ? "border-white/40 bg-black/20 backdrop-blur-xs text-white hover:bg-black/30"
-                  : "border-slate-300 bg-white text-slate-900 hover:bg-slate-50"
+                  ? "border-white/30 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20"
+                  : "border-border bg-surface text-foreground hover:border-gold hover:text-gold"
               }`}
               aria-label={`Switch language to ${otherLang.toUpperCase()}`}
             >
               <span
                 className={
                   lang === "id"
-                    ? isTransparent
-                      ? "text-white font-bold"
-                      : "text-slate-900 font-bold"
-                    : isTransparent
-                    ? "text-white/60 font-medium"
-                    : "text-slate-600 font-medium"
+                    ? "font-bold"
+                    : "opacity-50 font-medium"
                 }
               >
                 ID
               </span>
-              <span className={isTransparent ? "text-white/40" : "text-slate-400"}>|</span>
+              <span className="opacity-30">|</span>
               <span
                 className={
                   lang === "en"
-                    ? isTransparent
-                      ? "text-white font-bold"
-                      : "text-slate-900 font-bold"
-                    : isTransparent
-                    ? "text-white/60 font-medium"
-                    : "text-slate-600 font-medium"
+                    ? "font-bold"
+                    : "opacity-50 font-medium"
                 }
               >
                 EN
@@ -145,7 +151,7 @@ export default function Header({ lang, dict }: HeaderProps) {
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className={`lg:hidden p-2 -mr-2 transition-colors duration-300 ${
-                isTransparent ? "text-white" : "text-slate-900"
+                isTransparent ? "text-white" : "text-foreground"
               }`}
               aria-label="Toggle menu"
             >
@@ -162,10 +168,10 @@ export default function Header({ lang, dict }: HeaderProps) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="lg:hidden border-t border-border bg-white text-slate-900 overflow-hidden shadow-md"
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="lg:hidden border-t border-border bg-background text-foreground overflow-hidden"
           >
-            <nav className="px-6 py-6 flex flex-col gap-4">
+            <nav className="px-6 py-6 flex flex-col gap-1">
               {navKeys.map(({ key, href }) => {
                 const fullHref = `/${lang}${href}`;
                 const isActive =
@@ -178,10 +184,10 @@ export default function Header({ lang, dict }: HeaderProps) {
                     key={key}
                     href={fullHref}
                     onClick={() => setMobileOpen(false)}
-                    className={`text-sm tracking-wide uppercase transition-colors duration-200 ${
+                    className={`text-sm tracking-wide uppercase py-2.5 px-3 rounded-lg transition-all duration-200 ${
                       isActive
-                        ? "text-ocean-deep font-bold"
-                        : "text-slate-600 font-medium hover:text-slate-900"
+                        ? "text-accent font-bold bg-accent-light"
+                        : "text-muted font-medium hover:text-foreground hover:bg-surface"
                     }`}
                   >
                     {dict.nav[key as keyof typeof dict.nav]}

@@ -5,29 +5,44 @@ import { motion } from "framer-motion";
 type SectionHeaderProps = {
   title: string;
   subtitle?: string;
+  label?: string;
   align?: "left" | "center";
+  dark?: boolean;
 };
 
 export default function SectionHeader({
   title,
   subtitle,
+  label,
   align = "center",
+  dark = false,
 }: SectionHeaderProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`mb-10 lg:mb-14 ${
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      className={`mb-12 lg:mb-16 ${
         align === "center" ? "text-center max-w-2xl mx-auto" : ""
       }`}
     >
-      <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-slate-900 mb-3 tracking-tight">
+      {label && (
+        <span className="label-accent">{label}</span>
+      )}
+      <h2
+        className={`text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.15] mb-4 tracking-tight ${
+          dark ? "text-white" : "text-foreground"
+        }`}
+      >
         {title}
       </h2>
       {subtitle && (
-        <p className="text-slate-600 text-base lg:text-lg leading-relaxed font-normal">
+        <p
+          className={`text-base lg:text-lg leading-relaxed font-normal max-w-xl ${
+            align === "center" ? "mx-auto" : ""
+          } ${dark ? "text-white/60" : "text-muted"}`}
+        >
           {subtitle}
         </p>
       )}
