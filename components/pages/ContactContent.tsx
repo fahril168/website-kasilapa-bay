@@ -114,7 +114,7 @@ export default function ContactContent({ dict }: Props) {
           >
             <iframe
               title="Kasilapa Bay Location Map"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31758.123456789!2d123.950000!3d-5.750000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2da8000000000000%3A0x0!2zNcKwNDUnMDAuMCJTIDEyM8KwNTcnMDAuMCJF!5e0!3m2!1sen!2sid!4v1600000000000!5m2!1sen!2sid"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d281.21142835228903!2d123.92039803533605!3d-5.7720609921013!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2da7051ead503aab%3A0xe09e8591a58f4101!2sKasilapa%20Bay%20Hotel!5e1!3m2!1sen!2sid!4v1786279501117!5m2!1sen!2sid"
               width="100%"
               height="100%"
               style={{ border: 0 }}

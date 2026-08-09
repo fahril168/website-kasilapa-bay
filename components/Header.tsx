@@ -60,7 +60,9 @@ export default function Header({ lang, dict }: HeaderProps) {
       }`}
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="flex h-[4.25rem] items-center justify-between">
+        <div className={`flex items-center justify-between transition-all duration-300 ${
+          scrolled ? "h-[4.5rem] lg:h-[5rem]" : "h-[5.5rem] lg:h-[6.5rem]"
+        }`}>
           {/* Logo */}
           <Link
             href={`/${lang}`}
