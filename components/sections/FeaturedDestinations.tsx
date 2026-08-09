@@ -23,7 +23,7 @@ export default function FeaturedDestinations({ dict, lang }: Props) {
     <section className="section-padding relative overflow-hidden">
       {/* Background Image */}
       <div
-        className="absolute inset-0 bg-cover bg-center bg-fixed"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat sm:bg-fixed"
         style={{ backgroundImage: "url('/img/beach.webp')" }}
       />
       {/* Overlay to soften background image */}
