@@ -31,22 +31,31 @@ export default function DestinationContent({ dict }: Props) {
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-          {places.map((place, i) => (
-            <motion.article
+          {places.map((place: any, i) => (
+            <motion.a
               key={place.name}
+              href={place.url}
+              target="_blank"
+              rel="noopener noreferrer"
               initial={{ opacity: 0, y: 25 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-20px" }}
               transition={{ duration: 0.5, ease: "easeOut", delay: (i % 3) * 0.1 }}
-              className={`group relative rounded-xl overflow-hidden cursor-pointer ${
-                i === 0 ? "sm:col-span-2 lg:col-span-2 aspect-[16/9]" : "aspect-[4/3]"
+              className={`group relative rounded-xl overflow-hidden cursor-pointer block ${
+                i === 0
+                  ? "sm:col-span-2 lg:col-span-2 aspect-[16/9]"
+                  : i === 1
+                  ? "aspect-[4/3] lg:aspect-[8/9]"
+                  : i === 6
+                  ? "sm:col-span-2 lg:col-span-2 aspect-[16/9] lg:aspect-[8/3]"
+                  : "aspect-[4/3]"
               }`}
             >
               {/* Image */}
               <div
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
                 style={{
-                  backgroundImage: `url('${destinationImages[i] || destinationImages[0]}')`,
+                  backgroundImage: `url('${place.image}')`,
                 }}
               />
 
@@ -73,7 +82,7 @@ export default function DestinationContent({ dict }: Props) {
                   {place.distance}
                 </span>
               </div>
-            </motion.article>
+            </motion.a>
           ))}
         </div>
       </div>

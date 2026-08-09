@@ -121,7 +121,7 @@ export default function AboutSection({ dict }: Props) {
             </div>
           </motion.div>
 
-          {/* Right Column: Image Carousel */}
+          {/* Right Column: Image Carousel with Full-Bleed to the right screen edge */}
           <motion.div
             ref={containerRef}
             initial={{ opacity: 0, x: 30 }}
@@ -130,34 +130,37 @@ export default function AboutSection({ dict }: Props) {
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="lg:col-span-7 relative w-full overflow-hidden select-none group touch-pan-y"
+            className="lg:col-span-7 relative w-full overflow-visible select-none group touch-pan-y"
           >
-            {/* Drag Track */}
-            <motion.div
-              style={{ x }}
-              drag="x"
-              dragConstraints={{
-                left: -((roomImages.length - 1) * 300),
-                right: 0,
-              }}
-              dragElastic={0.1}
-              onDragEnd={handleDragEnd}
-              className="flex gap-4 sm:gap-5 w-full cursor-grab active:cursor-grabbing"
-            >
-              {roomImages.map((img, index) => (
-                <div
-                  key={index}
-                  className="w-[83%] flex-shrink-0 relative aspect-[4/3] rounded-lg overflow-hidden bg-dark shadow-xl"
-                >
-                  <img
-                    src={img.src}
-                    alt={img.alt}
-                    className="w-full h-full object-cover pointer-events-none"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1a1714]/50 via-transparent to-transparent pointer-events-none z-10" />
-                </div>
-              ))}
-            </motion.div>
+            {/* Overflow wrapper extends to the right edge of the viewport */}
+            <div className="overflow-hidden w-full lg:w-[calc(100%+20vw)] lg:pr-[20vw]">
+              {/* Drag Track */}
+              <motion.div
+                style={{ x }}
+                drag="x"
+                dragConstraints={{
+                  left: -((roomImages.length - 1) * 300),
+                  right: 0,
+                }}
+                dragElastic={0.1}
+                onDragEnd={handleDragEnd}
+                className="flex gap-4 sm:gap-5 w-full cursor-grab active:cursor-grabbing"
+              >
+                {roomImages.map((img, index) => (
+                  <div
+                    key={index}
+                    className="w-[83%] flex-shrink-0 relative aspect-[4/3] rounded-lg overflow-hidden bg-dark shadow-xl"
+                  >
+                    <img
+                      src={img.src}
+                      alt={img.alt}
+                      className="w-full h-full object-cover pointer-events-none"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1a1714]/50 via-transparent to-transparent pointer-events-none z-10" />
+                  </div>
+                ))}
+              </motion.div>
+            </div>
 
             {/* Indicator Dots */}
             <div className="absolute bottom-4 left-0 w-[83%] flex items-center justify-center text-white z-30 pointer-events-auto">
@@ -179,23 +182,6 @@ export default function AboutSection({ dict }: Props) {
                 ))}
               </div>
             </div>
-
-            {/* Arrow Controls */}
-            <button
-              onClick={handlePrev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 z-30 p-2.5 rounded-full bg-white/90 text-foreground hover:bg-white transition-all duration-200 shadow-lg opacity-80 sm:opacity-0 group-hover:opacity-100"
-              aria-label="Previous Image"
-            >
-              <ChevronLeft size={18} />
-            </button>
-
-            <button
-              onClick={handleNext}
-              className="absolute right-3 top-1/2 -translate-y-1/2 z-30 p-2.5 rounded-full bg-white/90 text-foreground hover:bg-white transition-all duration-200 shadow-lg opacity-80 sm:opacity-0 group-hover:opacity-100"
-              aria-label="Next Image"
-            >
-              <ChevronRight size={18} />
-            </button>
           </motion.div>
         </div>
       </div>

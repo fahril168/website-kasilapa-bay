@@ -70,40 +70,84 @@
     "distance": "distance",
     "places": [
       {
-        "name": "Hondue Beach",
-        "category": "Beach",
-        "description": "Just a 5-minute drive from Kasilapa Bay. This beach has calm, clear water and fine white sand, making it perfect for swimming and enjoying the sunset.",
-        "distance": "5 min drive"
-      },
-      {
         "name": "Kahianga Peak",
         "category": "Scenic Views",
-        "description": "The highest point on Tomia. with endless blue ocean view, beautiful sunset, and lush tropical forest.",
-        "distance": "15 min drive"
+        "description": "The highest point on Tomia with endless blue ocean views, green savannah hills, and a gorgeous sunset.",
+        "distance": "10 min drive",
+        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Puncak-Kahianga-by-Amal-Hermawan-428x242.jpg",
+        "url": "https://www.wakatobitourism.com/item/kahianga-peak/"
+      },
+      {
+        "name": "Kulati Village",
+        "category": "History & Culture",
+        "description": "A community-based ecotourism destination featuring spectacular cliffside ocean panoramas like Huntete Beach.",
+        "distance": "20 min drive",
+        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Huuntete-Beach-Kulati-by-Muis-Bhojest-min-428x242.jpg",
+        "url": "https://www.wakatobitourism.com/item/kulati-village/"
+      },
+      {
+        "name": "Lentea Island",
+        "category": "Beach",
+        "description": "A neighboring island boasting incredibly soft white sand beaches, towering coconut trees, and crystal clear water.",
+        "distance": "30 min by boat",
+        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Pulau-Lentea-Tomia-49-428x242.jpg",
+        "url": "https://www.wakatobitourism.com/item/lintea-island/"
       },
       {
         "name": "Roma",
         "category": "Diving",
-        "description": "One of the world's most famous wall dives. A vertical reef dropping to 80 meters, teeming with marine life.",
-        "distance": "10 min by boat"
+        "description": "The most famous dive site in Wakatobi, teeming with marine life and schooling fish around a massive pinnacled reef.",
+        "distance": "15 min by boat",
+        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Roma-by-Wakatobi-Regency-428x242.jpg",
+        "url": "https://www.wakatobitourism.com/item/roma/"
       },
       {
-        "name": "Nata Fortress",
-        "category": "History & Culture",
-        "description": "An ancient fortress from the Buton Kingdom, still standing strong. A testament to the island's maritime heritage.",
-        "distance": "20 min drive"
-      },
-      {
-        "name": "Huntete Beach",
+        "name": "Nda'a Island",
         "category": "Beach",
-        "description": "Located in the eastern part of Tomia Island. It has white sand and clear sea water. If you are lucky, tourists can also see whales swimming not far from the beach.",
-        "distance": "20 min drive"
+        "description": "An uninhabited island featuring powder-white sand beaches and a shallow, pristine coral reef ecosystem.",
+        "distance": "40 min by boat",
+        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Ndaa-Island-by-Guntur-2-428x242.jpg",
+        "url": "https://www.wakatobitourism.com/item/ndaa-island/"
       },
       {
-        "name": "Patua Fortress",
+        "name": "Patua Fort",
         "category": "History & Culture",
-        "description": "Located on a hilltop, this fortress offers a stunning view from green hills to the vast blue ocean. Built during the kingdom era, Patua Fortress stands as a silent witness to the long history of civilization in Wakatobi.",
-        "distance": "18 min drive"
+        "description": "An ancient hilltop fortress made of coral stones from the Buton Sultanate era, offering a majestic landscape.",
+        "distance": "18 min drive",
+        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Patua-Fort-by-Amal-Hermawan-428x242.jpg",
+        "url": "https://www.wakatobitourism.com/item/patua-fort/"
+      },
+      {
+        "name": "Ali Reef",
+        "category": "Diving",
+        "description": "A popular diving site famous for massive schools of colorful fish swimming amongst healthy coral reefs.",
+        "distance": "20 min by boat",
+        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Fish-Schooling-by-DCDC-min-428x242.jpg",
+        "url": "https://www.wakatobitourism.com/item/ali-reef/"
+      },
+      {
+        "name": "Kolosuha",
+        "category": "Diving",
+        "description": "A steep underwater wall reef on the west side of Tomia Island, bursting with marine biodiversity.",
+        "distance": "18 min by boat",
+        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Kolosuha-by-Wakatobi-Regency-428x242.jpg",
+        "url": "https://www.wakatobitourism.com/item/kolosuha/"
+      },
+      {
+        "name": "Mari Mabuk",
+        "category": "Diving",
+        "description": "A top-rated coral garden dive spot offering gorgeous sea life sights with friendly, gentle currents.",
+        "distance": "15 min by boat",
+        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/05/Mari-Mabuk-by-Hendra-Tan-min-1-428x242.jpg",
+        "url": "https://www.wakatobitourism.com/item/mari-mabuk/"
+      },
+      {
+        "name": "Wreck of Kulati",
+        "category": "Diving",
+        "description": "A historic shipwreck site near Kulati Village, now fully covered in beautiful corals and home to marine life.",
+        "distance": "25 min by boat",
+        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Wreck-Kulati-by-Guntur-428x242.jpg",
+        "url": "https://www.wakatobitourism.com/item/wreck-of-kulati/"
       }
     ]
   },

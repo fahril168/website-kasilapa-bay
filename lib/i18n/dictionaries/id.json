@@ -70,40 +70,84 @@
     "distance": "jarak",
     "places": [
       {
-        "name": "Pantai Hondue",
-        "category": "Pantai ",
-        "description": "Pantai ini memiliki pantai pasir putih yang membentang sepanjang 200 meter. Posisinya yang menghadap ke barat menawarkan pemandangan matahari tenggelam yang sayang dilewatkan.",
-        "distance": "5 menit berkendara"
-      },
-      {
         "name": "Puncak Kahianga",
         "category": "Pemandangan Alam",
-        "description": "Titik tertinggi di Tomia dengan pemandangan laut biru tak berujung, sunset yang indah, dan hutan tropis yang hijau.",
-        "distance": "10 menit berkendara"
+        "description": "Titik tertinggi di Tomia dengan pemandangan laut biru tak berujung, bukit sabana yang hijau, dan sunset yang indah.",
+        "distance": "10 menit berkendara",
+        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Puncak-Kahianga-by-Amal-Hermawan-428x242.jpg",
+        "url": "https://www.wakatobitourism.com/item/kahianga-peak/"
+      },
+      {
+        "name": "Desa Kulati",
+        "category": "Sejarah & Budaya",
+        "description": "Desa wisata berbasis masyarakat dengan keindahan pantai tebing karang seperti Pantai Huntete yang eksotis.",
+        "distance": "20 menit berkendara",
+        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Huuntete-Beach-Kulati-by-Muis-Bhojest-min-428x242.jpg",
+        "url": "https://www.wakatobitourism.com/item/kulati-village/"
+      },
+      {
+        "name": "Pulau Lentea",
+        "category": "Pantai",
+        "description": "Pulau tetangga berpasir putih halus yang dikelilingi pohon kelapa menjulang tinggi dan air laut yang sangat jernih.",
+        "distance": "30 menit perahu",
+        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Pulau-Lentea-Tomia-49-428x242.jpg",
+        "url": "https://www.wakatobitourism.com/item/lintea-island/"
       },
       {
         "name": "Roma",
         "category": "Diving",
-        "description": "Salah satu dinding selam paling terkenal di dunia. Terumbu vertikal yang menurun hingga kedalaman 80 meter, dipenuhi kehidupan laut.",
-        "distance": "10 menit perahu"
+        "description": "Spot menyelam paling populer dengan ribuan schooling fish yang mengitari puncak terumbu karang melingkar besar.",
+        "distance": "15 menit perahu",
+        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Roma-by-Wakatobi-Regency-428x242.jpg",
+        "url": "https://www.wakatobitourism.com/item/roma/"
       },
       {
-        "name": "Benteng Nata",
-        "category": "Sejarah & Budaya",
-        "description": "Benteng kuno peninggalan Kerajaan Buton yang masih berdiri kokoh. Bukti sejarah maritim nusantara di pulau kecil ini.",
-        "distance": "20 menit berkendara"
-      },
-      {
-        "name": "Pantai Huntete",
+        "name": "Pulau Nda'a",
         "category": "Pantai",
-        "description": "Terletak di ujung timur Pulau Tomia. Memiliki hamparan pasir putih dan air laut yang jernih.  Jika beruntung wisatawan juga bisa menyaksikan ikan paus berenang tidak jauh dari pantai.",
-        "distance": "20 menit berkendara"
+        "description": "Pulau tak berpenghuni dengan pantai berpasir selembut tepung dan ekosistem terumbu karang yang sangat dangkal dan utuh.",
+        "distance": "40 menit perahu",
+        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Ndaa-Island-by-Guntur-2-428x242.jpg",
+        "url": "https://www.wakatobitourism.com/item/ndaa-island/"
       },
       {
         "name": "Benteng Patua",
         "category": "Sejarah & Budaya",
-        "description": "Situs bersejarah peninggalan masa kerajaan di puncak bukit Pulau Tomia, Wakatobi. Selain bernilai sejarah, tempat ini menyajikan pemandangan alam ke arah perbukitan dan laut, sehingga cocok untuk berwisata, menikmati udara segar, dan berfoto.",
-        "distance": "18 menit berkendara"
+        "description": "Benteng bersejarah peninggalan Kesultanan Buton di puncak bukit batu karang Tomia yang menyuguhkan lanskap spektakuler.",
+        "distance": "18 menit berkendara",
+        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Patua-Fort-by-Amal-Hermawan-428x242.jpg",
+        "url": "https://www.wakatobitourism.com/item/patua-fort/"
+      },
+      {
+        "name": "Ali Reef",
+        "category": "Diving",
+        "description": "Spot menyelam populer yang terkenal dengan kawanan besar ikan schooling fish yang berenang bebas di antara terumbu karang.",
+        "distance": "20 menit perahu",
+        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Fish-Schooling-by-DCDC-min-428x242.jpg",
+        "url": "https://www.wakatobitourism.com/item/ali-reef/"
+      },
+      {
+        "name": "Kolosuha",
+        "category": "Diving",
+        "description": "Tebing terumbu karang bawah laut yang curam di sisi barat Tomia, dipenuhi keanekaragaman biota laut.",
+        "distance": "18 menit perahu",
+        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Kolosuha-by-Wakatobi-Regency-428x242.jpg",
+        "url": "https://www.wakatobitourism.com/item/kolosuha/"
+      },
+      {
+        "name": "Mari Mabuk",
+        "category": "Diving",
+        "description": "Salah satu titik selam favorit dengan pemandangan terumbu karang warna-warni dan arus air yang bersahabat.",
+        "distance": "15 menit perahu",
+        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/05/Mari-Mabuk-by-Hendra-Tan-min-1-428x242.jpg",
+        "url": "https://www.wakatobitourism.com/item/mari-mabuk/"
+      },
+      {
+        "name": "Wreck of Kulati",
+        "category": "Diving",
+        "description": "Bangkai kapal karam bersejarah di kedalaman laut dekat Kulati yang kini bertransformasi menjadi rumah bagi terumbu karang indah.",
+        "distance": "25 menit perahu",
+        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Wreck-Kulati-by-Guntur-428x242.jpg",
+        "url": "https://www.wakatobitourism.com/item/wreck-of-kulati/"
       }
     ]
   },

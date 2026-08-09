@@ -66,11 +66,10 @@ export default function GalleryContent({ dict }: Props) {
               <button
                 key={key}
                 onClick={() => setActiveFilter(key)}
-                className={`text-xs font-semibold tracking-wider uppercase px-5 py-2.5 border transition-all duration-200 rounded-full ${
-                  activeFilter === key
+                className={`text-xs font-semibold tracking-wider uppercase px-5 py-2.5 border transition-all duration-200 rounded-full ${activeFilter === key
                     ? "border-foreground text-white bg-foreground"
                     : "border-border text-muted bg-transparent hover:border-foreground hover:text-foreground"
-                }`}
+                  }`}
               >
                 {label}
               </button>

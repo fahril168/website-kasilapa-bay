@@ -76,9 +76,8 @@ export default function AccommodationContent({ dict, lang }: Props) {
                 >
                   {/* Image */}
                   <div
-                    className={`aspect-[4/3] lg:aspect-auto relative overflow-hidden ${
-                      i % 2 === 1 ? "lg:order-2" : ""
-                    }`}
+                    className={`aspect-[4/3] lg:aspect-auto relative overflow-hidden ${i % 2 === 1 ? "lg:order-2" : ""
+                      }`}
                   >
                     <div
                       className="w-full h-full min-h-[240px] sm:min-h-[320px] group-hover:scale-105 transition-transform duration-700 ease-out"
