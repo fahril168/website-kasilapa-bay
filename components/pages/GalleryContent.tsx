@@ -10,23 +10,22 @@ type Props = {
   dict: Dictionary;
 };
 
-const galleryImages = [
-  { src: "/img/rooms/24.webp", category: "property", alt: "Kasilapa Bay Property" },
-  { src: "/img/rooms/2.webp", category: "property", alt: "Room Interior" },
-  { src: "/img/rooms/3.webp", category: "property", alt: "Deluxe Double" },
-  { src: "/img/rooms/18.webp", category: "property", alt: "Room View" },
-  { src: "/img/rooms/7.webp", category: "property", alt: "Cozy Room" },
-  { src: "/img/rooms/6.webp", category: "property", alt: "Junior Suite" },
-  { src: "/img/rooms/13.webp", category: "property", alt: "Room Detail" },
-  { src: "/img/rooms/22.webp", category: "property", alt: "Deluxe Room" },
-  { src: "/img/rooms/10.webp", category: "property", alt: "Room Amenity" },
-  { src: "/img/destinations/hondue.webp", category: "island", alt: "Pantai Hondue" },
-  { src: "/img/destinations/kahianga.webp", category: "island", alt: "Puncak Kahianga" },
-  { src: "/img/destinations/roma.webp", category: "underwater", alt: "Spot Diving Roma" },
-  { src: "/img/destinations/nata.webp", category: "island", alt: "Benteng Nata" },
-  { src: "/img/destinations/huntete.webp", category: "island", alt: "Pantai Huntete" },
-  { src: "/img/destinations/patua.webp", category: "island", alt: "Benteng Patua" },
+const roomGalleryImages = Array.from({ length: 34 }, (_, i) => ({
+  src: `/img/rooms/${i + 1}.webp`,
+  category: "property" as const,
+  alt: `Penginapan Kasilapa Bay ${i + 1}`,
+}));
+
+const destinationGalleryImages = [
+  { src: "/img/destinations/hondue.webp", category: "island" as const, alt: "Pantai Hondue" },
+  { src: "/img/destinations/kahianga.webp", category: "island" as const, alt: "Puncak Kahianga" },
+  { src: "/img/destinations/roma.webp", category: "underwater" as const, alt: "Spot Diving Roma" },
+  { src: "/img/destinations/nata.webp", category: "island" as const, alt: "Benteng Nata" },
+  { src: "/img/destinations/huntete.webp", category: "island" as const, alt: "Pantai Huntete" },
+  { src: "/img/destinations/patua.webp", category: "island" as const, alt: "Benteng Patua" },
 ];
+
+const galleryImages = [...roomGalleryImages, ...destinationGalleryImages];
 
 type FilterKey = "all" | "property" | "underwater" | "island" | "dining";
 

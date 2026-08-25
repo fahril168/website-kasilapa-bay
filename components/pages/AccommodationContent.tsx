@@ -3,8 +3,6 @@
 import { motion } from "framer-motion";
 import {
   Users,
-  BedDouble,
-  Eye,
   ArrowRight,
   Wifi,
   UtensilsCrossed,
@@ -37,9 +35,8 @@ const facilityIcons: Record<string, React.ReactNode> = {
 };
 
 const roomImages = [
-  "/img/rooms/6.webp",
-  "/img/rooms/12.webp",
-  "/img/rooms/3.webp",
+  "/img/rooms/15.webp",
+  "/img/rooms/2.webp",
 ];
 
 export default function AccommodationContent({ dict, lang }: Props) {
@@ -91,7 +88,7 @@ export default function AccommodationContent({ dict, lang }: Props) {
 
                   {/* Details */}
                   <div className="p-6 sm:p-8 lg:p-12 flex flex-col justify-center">
-                    <h3 className="text-2xl lg:text-3xl font-bold text-foreground group-hover:text-accent transition-colors duration-200 mb-3 font-serif">
+                    <h3 className="text-2xl lg:text-3xl font-bold text-foreground group-hover:text-gold transition-colors duration-200 mb-3 font-serif">
                       {room.name}
                     </h3>
                     <p className="text-muted text-base leading-relaxed mb-6 font-normal">
@@ -103,14 +100,6 @@ export default function AccommodationContent({ dict, lang }: Props) {
                       <span className="flex items-center gap-2">
                         <Users size={16} className="text-gold" />
                         {room.capacity} {dict.accommodation.guests}
-                      </span>
-                      <span className="flex items-center gap-2">
-                        <BedDouble size={16} className="text-gold" />
-                        {room.bed}
-                      </span>
-                      <span className="flex items-center gap-2">
-                        <Eye size={16} className="text-gold" />
-                        {room.view}
                       </span>
                     </div>
 

@@ -64,7 +64,7 @@ export default function ContactContent({ dict }: Props) {
                     href={`https://wa.me/${WHATSAPP_NUMBER}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-foreground text-base font-bold hover:text-accent transition-colors"
+                    className="text-foreground text-base font-bold hover:text-gold transition-colors"
                   >
                     +62 821-1234-5678
                   </a>
@@ -81,7 +81,7 @@ export default function ContactContent({ dict }: Props) {
                   </p>
                   <a
                     href="mailto:hello@kasilapabay.com"
-                    className="text-foreground text-base font-bold hover:text-accent transition-colors"
+                    className="text-foreground text-base font-bold hover:text-gold transition-colors"
                   >
                     hello@kasilapabay.com
                   </a>

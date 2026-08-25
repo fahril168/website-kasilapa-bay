@@ -39,28 +39,16 @@
     },
     "rooms": [
       {
-        "name": "Deluxe Junior Suite",
+        "name": "Standart Room",
         "description": "This room type is the most economical option, usually intended for solo travelers or couples who want standard accommodation.",
         "capacity": 2,
-        "bed": "1 Queen Bed or 2 Twin Beds",
-        "view": "Hill View",
         "price": 250000
       },
       {
         "name": "Deluxe Room",
-        "description": "A mid-range room type with slightly more spacious dimensions and more comfortable furnishings for resting after a full day of diving.",
+        "description": "A room type with a more spacious layout and more comfortable setup for maximum relaxation during your stay on Tomia Island.",
         "capacity": 2,
-        "bed": "1 Queen Bed",
-        "view": "Ocean View",
         "price": 300000
-      },
-      {
-        "name": "Deluxe Double",
-        "description": "The best room type at Kasilapa Bay, highly recommended as it offers the best position and view directly overlooking the bay.",
-        "capacity": 3,
-        "bed": "1 King Bed",
-        "view": "Ocean View",
-        "price": 350000
       }
     ]
   },

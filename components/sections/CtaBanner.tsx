@@ -15,11 +15,11 @@ export default function CtaBanner({ dict }: Props) {
       {/* Background image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-fixed"
-        style={{ backgroundImage: "url('/img/rooms/21.webp')" }}
+        style={{ backgroundImage: "url('/img/rooms/2.webp')" }}
       />
 
       {/* Warm overlay */}
-      <div className="absolute inset-0 bg-[#1a1714]/75" />
+      <div className="absolute inset-0 bg-[#1a1714]/50" />
 
       {/* Wave divider top */}
       <div className="wave-divider">

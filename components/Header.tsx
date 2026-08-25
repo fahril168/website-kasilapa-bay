@@ -95,7 +95,7 @@ export default function Header({ lang, dict }: HeaderProps) {
                     isActive
                       ? isTransparent
                         ? "text-white font-bold"
-                        : "text-accent font-bold"
+                        : "text-gold font-bold"
                       : isTransparent
                       ? "text-white/70 font-medium hover:text-white"
                       : "text-muted font-medium hover:text-foreground"
@@ -105,9 +105,7 @@ export default function Header({ lang, dict }: HeaderProps) {
                   {isActive && (
                     <motion.div
                       layoutId="activeNavIndicator"
-                      className={`absolute bottom-0 left-3.5 right-3.5 h-0.5 rounded-full ${
-                        isTransparent ? "bg-gold" : "bg-gold"
-                      }`}
+                      className="absolute bottom-0 left-3.5 right-3.5 h-0.5 rounded-full bg-gold"
                       transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 30 }}
                     />
                   )}
@@ -188,7 +186,7 @@ export default function Header({ lang, dict }: HeaderProps) {
                     onClick={() => setMobileOpen(false)}
                     className={`text-sm tracking-wide uppercase py-2.5 px-3 rounded-lg transition-all duration-200 ${
                       isActive
-                        ? "text-accent font-bold bg-accent-light"
+                        ? "text-gold font-bold bg-gold/10"
                         : "text-muted font-medium hover:text-foreground hover:bg-surface"
                     }`}
                   >

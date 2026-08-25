@@ -39,28 +39,16 @@
     },
     "rooms": [
       {
-        "name": "Deluxe Junior Suite",
+        "name": "Standart Room",
         "description": "Tipe kamar ini merupakan opsi paling ekonomis, biasanya ditujukan untuk solo traveler atau dua orang yang menginginkan akomodasi standar.",
         "capacity": 2,
-        "bed": "1 Queen Bed atau 2 Twin Beds",
-        "view": "Pemandangan Bukit",
         "price": 250000
       },
       {
         "name": "Deluxe Room",
-        "description": "Tipe kamar menengah dengan ukuran ruang yang sedikit lebih lapang dan penataan yang lebih nyaman untuk beristirahat setelah seharian menyelam.",
+        "description": "Tipe kamar dengan ukuran ruang yang lebih lapang dan penataan yang lebih nyaman untuk istirahat maksimal selama berada di Pulau Tomia.",
         "capacity": 2,
-        "bed": "1 Queen Bed",
-        "view": "Pemandangan Laut",
         "price": 300000
-      },
-      {
-        "name": "Deluxe Double",
-        "description": "Tipe kamar terbaik di Kasilapa Bay yang paling direkomendasikan karena menawarkan posisi dan pemandangan terbaik langsung menghadap teluk.",
-        "capacity": 3,
-        "bed": "1 King Bed",
-        "view": "Pemandangan Laut",
-        "price": 350000
       }
     ]
   },
