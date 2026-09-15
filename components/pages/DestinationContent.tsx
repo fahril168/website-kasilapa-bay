@@ -1,25 +1,65 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { MapPin } from "lucide-react";
 import SectionHeader from "@/components/SectionHeader";
-import type { Dictionary } from "@/lib/i18n";
+import type { Locale, Dictionary } from "@/lib/i18n";
+import { getApiUrl } from "@/lib/utils";
+import { STORAGE_KEYS, DATA_SYNC_EVENT, getStoredData, setStoredData } from "@/lib/storage";
 
 type Props = {
   dict: Dictionary;
+  lang?: Locale;
 };
 
-const destinationImages = [
-  "/img/destinations/hondue.webp",
-  "/img/destinations/kahianga.webp",
-  "/img/destinations/roma.webp",
-  "/img/destinations/nata.webp",
-  "/img/destinations/huntete.webp",
-  "/img/destinations/patua.webp",
-];
+export default function DestinationContent({ dict, lang = "id" }: Props) {
+  const [dynamicPlaces, setDynamicPlaces] = useState<any[]>([]);
 
-export default function DestinationContent({ dict }: Props) {
-  const places = dict.destination.places;
+  useEffect(() => {
+    // 1. Initial load from local persistent storage
+    const stored = getStoredData<any[]>(STORAGE_KEYS.DESTINATIONS, []);
+    if (Array.isArray(stored) && stored.length > 0) {
+      setDynamicPlaces(stored);
+    }
+
+    // 2. Real-time sync listener
+    const handleSync = () => {
+      const updated = getStoredData<any[]>(STORAGE_KEYS.DESTINATIONS, []);
+      if (Array.isArray(updated) && updated.length > 0) {
+        setDynamicPlaces(updated);
+      }
+    };
+    window.addEventListener(DATA_SYNC_EVENT, handleSync);
+    window.addEventListener("storage", handleSync);
+
+    // 3. Background fetch from API
+    fetch(getApiUrl("/api/destinasi.php"))
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json?.status === "success" && Array.isArray(json.data) && json.data.length > 0) {
+          setDynamicPlaces(json.data);
+          setStoredData(STORAGE_KEYS.DESTINATIONS, json.data);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      window.removeEventListener(DATA_SYNC_EVENT, handleSync);
+      window.removeEventListener("storage", handleSync);
+    };
+  }, []);
+
+  const placesToDisplay = dynamicPlaces.length > 0
+    ? dynamicPlaces.map((d) => ({
+        name: lang === "en" ? d.name_en : d.name_id,
+        category: d.category,
+        description: lang === "en" ? d.description_en : d.description_id,
+        distance: d.distance,
+        image: d.image_url,
+        url: d.info_url || "#"
+      }))
+    : dict.destination.places;
 
   return (
     <section className="pt-16 section-padding bg-background">
@@ -31,9 +71,9 @@ export default function DestinationContent({ dict }: Props) {
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-          {places.map((place: any, i) => (
+          {placesToDisplay.map((place: any, i: number) => (
             <motion.a
-              key={place.name}
+              key={place.name + i}
               href={place.url}
               target="_blank"
               rel="noopener noreferrer"
@@ -41,14 +81,15 @@ export default function DestinationContent({ dict }: Props) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-20px" }}
               transition={{ duration: 0.5, ease: "easeOut", delay: (i % 3) * 0.1 }}
-              className={`group relative rounded-xl overflow-hidden cursor-pointer block ${i === 0
+              className={`group relative rounded-xl overflow-hidden cursor-pointer block ${
+                i === 0
                   ? "sm:col-span-2 lg:col-span-2 aspect-[16/9]"
                   : i === 1
-                    ? "aspect-[4/3] lg:aspect-[8/9]"
-                    : i === 6
-                      ? "sm:col-span-2 lg:col-span-2 aspect-[16/9] lg:aspect-[8/3]"
-                      : "aspect-[4/3]"
-                }`}
+                  ? "aspect-[4/3] lg:aspect-[8/9]"
+                  : i === 6
+                  ? "sm:col-span-2 lg:col-span-2 aspect-[16/9] lg:aspect-[8/3]"
+                  : "aspect-[4/3]"
+              }`}
             >
               {/* Image */}
               <div

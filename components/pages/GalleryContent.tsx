@@ -1,22 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import SectionHeader from "@/components/SectionHeader";
-import type { Dictionary } from "@/lib/i18n";
+import type { Dictionary, Locale } from "@/lib/i18n";
+import { getApiUrl } from "@/lib/utils";
+import { STORAGE_KEYS, DATA_SYNC_EVENT, getStoredData, setStoredData } from "@/lib/storage";
 
 type Props = {
   dict: Dictionary;
+  lang?: Locale;
 };
 
-const roomGalleryImages = Array.from({ length: 34 }, (_, i) => ({
+const defaultRoomGalleryImages = Array.from({ length: 34 }, (_, i) => ({
   src: `/img/rooms/${i + 1}.webp`,
   category: "property" as const,
   alt: `Penginapan Kasilapa Bay ${i + 1}`,
 }));
 
-const destinationGalleryImages = [
+const defaultDestinationGalleryImages = [
   { src: "/img/destinations/hondue.webp", category: "island" as const, alt: "Pantai Hondue" },
   { src: "/img/destinations/kahianga.webp", category: "island" as const, alt: "Puncak Kahianga" },
   { src: "/img/destinations/roma.webp", category: "underwater" as const, alt: "Spot Diving Roma" },
@@ -25,20 +28,68 @@ const destinationGalleryImages = [
   { src: "/img/destinations/patua.webp", category: "island" as const, alt: "Benteng Patua" },
 ];
 
-const galleryImages = [...roomGalleryImages, ...destinationGalleryImages];
+const defaultGalleryImages = [...defaultRoomGalleryImages, ...defaultDestinationGalleryImages];
 
 type FilterKey = "all" | "property" | "underwater" | "island" | "dining";
 
-export default function GalleryContent({ dict }: Props) {
+export default function GalleryContent({ dict, lang = "id" }: Props) {
   const [activeFilter, setActiveFilter] = useState<FilterKey>("all");
   const [lightbox, setLightbox] = useState<number | null>(null);
+  const [dynamicGallery, setDynamicGallery] = useState<any[]>([]);
+
+  useEffect(() => {
+    // 1. Initial load from local persistent storage
+    const stored = getStoredData<any[]>(STORAGE_KEYS.GALLERY, []);
+    if (Array.isArray(stored) && stored.length > 0) {
+      setDynamicGallery(stored);
+    }
+
+    // 2. Real-time sync listener
+    const handleSync = () => {
+      const updated = getStoredData<any[]>(STORAGE_KEYS.GALLERY, []);
+      if (Array.isArray(updated) && updated.length > 0) {
+        setDynamicGallery(updated);
+      }
+    };
+    window.addEventListener(DATA_SYNC_EVENT, handleSync);
+    window.addEventListener("storage", handleSync);
+
+    // 3. Background fetch from API
+    fetch(getApiUrl("/api/galeri.php"))
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json?.status === "success" && Array.isArray(json.data) && json.data.length > 0) {
+          setDynamicGallery(json.data);
+          setStoredData(STORAGE_KEYS.GALLERY, json.data);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      window.removeEventListener(DATA_SYNC_EVENT, handleSync);
+      window.removeEventListener("storage", handleSync);
+    };
+  }, []);
+
+  const isLoaded = dynamicGallery.length > 0;
+  const activeDynamicGallery = dynamicGallery.filter(
+    (g) => g.is_active !== 0 && g.is_active !== false && g.is_active !== "0"
+  );
+
+  const galleryImagesToDisplay = isLoaded
+    ? activeDynamicGallery.map((g) => ({
+        src: g.image_url,
+        category: (g.category || "property") as FilterKey,
+        alt: lang === "en" ? (g.title_en || g.title_id) : (g.title_id || g.title_en)
+      }))
+    : defaultGalleryImages;
 
   const filters = Object.entries(dict.gallery.filters) as [FilterKey, string][];
 
   const filtered =
     activeFilter === "all"
-      ? galleryImages
-      : galleryImages.filter((img) => img.category === activeFilter);
+      ? galleryImagesToDisplay
+      : galleryImagesToDisplay.filter((img) => img.category === activeFilter);
 
   const handleLightboxNav = (direction: "prev" | "next") => {
     if (lightbox === null) return;
@@ -65,36 +116,36 @@ export default function GalleryContent({ dict }: Props) {
               <button
                 key={key}
                 onClick={() => setActiveFilter(key)}
-                className={`text-xs font-semibold tracking-wider uppercase px-5 py-2.5 border transition-all duration-200 rounded-full ${activeFilter === key
-                  ? "border-foreground text-white bg-foreground"
-                  : "border-border text-muted bg-transparent hover:border-foreground hover:text-foreground"
-                  }`}
+                className={`text-xs font-semibold tracking-wider uppercase px-5 py-2.5 border transition-all duration-200 rounded-full ${
+                  activeFilter === key
+                    ? "border-foreground text-white bg-foreground"
+                    : "border-border text-muted bg-transparent hover:border-foreground hover:text-foreground"
+                }`}
               >
                 {label}
               </button>
             ))}
           </div>
 
-          {/* Masonry columns layout — 4 columns, filled space with varied vertical sizes */}
+          {/* Masonry layout */}
           <motion.div
             layout
             className="columns-2 md:columns-3 lg:columns-4 gap-3 sm:gap-4"
           >
             <AnimatePresence mode="popLayout">
               {filtered.map((img, i) => {
-                // Apply different aspect ratios to create varied vertical sizes
                 let aspectClass = "aspect-auto";
                 if (i % 3 === 0) {
-                  aspectClass = "aspect-[3/4]"; // Portrait
+                  aspectClass = "aspect-[3/4]";
                 } else if (i % 3 === 1) {
-                  aspectClass = "aspect-square"; // Square
+                  aspectClass = "aspect-square";
                 } else {
-                  aspectClass = "aspect-[4/3]"; // Landscape
+                  aspectClass = "aspect-[4/3]";
                 }
 
                 return (
                   <motion.button
-                    key={img.src}
+                    key={img.src + i}
                     layout
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -109,7 +160,6 @@ export default function GalleryContent({ dict }: Props) {
                       className="w-full h-full object-cover"
                       loading="lazy"
                     />
-                    {/* Hover overlay */}
                     <div className="absolute inset-0 bg-foreground/0 hover:bg-foreground/20 transition-colors duration-300" />
                   </motion.button>
                 );
@@ -129,7 +179,6 @@ export default function GalleryContent({ dict }: Props) {
             className="fixed inset-0 z-[100] bg-dark/95 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4"
             onClick={() => setLightbox(null)}
           >
-            {/* Close */}
             <button
               onClick={() => setLightbox(null)}
               className="absolute top-4 right-4 sm:top-6 sm:right-6 text-white/60 hover:text-white transition-colors z-10 p-2"
@@ -138,7 +187,6 @@ export default function GalleryContent({ dict }: Props) {
               <X size={28} />
             </button>
 
-            {/* Prev */}
             <button
               onClick={(e) => { e.stopPropagation(); handleLightboxNav("prev"); }}
               className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-white/10 text-white/70 hover:text-white hover:bg-white/20 transition-all"
@@ -147,7 +195,6 @@ export default function GalleryContent({ dict }: Props) {
               <ChevronLeft size={24} />
             </button>
 
-            {/* Next */}
             <button
               onClick={(e) => { e.stopPropagation(); handleLightboxNav("next"); }}
               className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-white/10 text-white/70 hover:text-white hover:bg-white/20 transition-all"
@@ -167,7 +214,6 @@ export default function GalleryContent({ dict }: Props) {
               onClick={(e) => e.stopPropagation()}
             />
 
-            {/* Counter */}
             <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 text-white/40 text-sm font-medium">
               {lightbox + 1} / {filtered.length}
             </div>

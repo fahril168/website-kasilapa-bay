@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import type { Locale, Dictionary } from "@/lib/i18n";
 import { getWhatsAppUrl } from "@/lib/utils";
+import { useDynamicSettings } from "@/lib/hooks/useDynamicSettings";
 
 type Props = {
   dict: Dictionary;
@@ -12,6 +13,8 @@ type Props = {
 };
 
 export default function HeroSection({ dict, lang }: Props) {
+  const { whatsappNumber } = useDynamicSettings();
+
   const waMessage =
     lang === "id"
       ? "Halo, saya tertarik untuk menginap di Kasilapa Bay. Bisa tolong informasikan ketersediaan kamar?"
@@ -72,12 +75,12 @@ export default function HeroSection({ dict, lang }: Props) {
           {dict.hero.subtitle}
         </motion.p>
 
-        {/* CTA button */}
+        {/* CTA button with dynamic WA number */}
         <motion.a
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.9 }}
-          href={getWhatsAppUrl(waMessage)}
+          href={getWhatsAppUrl(waMessage, whatsappNumber)}
           target="_blank"
           rel="noopener noreferrer"
           className="btn-gold shadow-lg"

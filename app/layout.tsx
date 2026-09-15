@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DM_Sans, Playfair_Display } from "next/font/google";
+import { DM_Sans, Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -10,6 +10,12 @@ const dmSans = DM_Sans({
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+const plusJakarta = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
 });
@@ -27,7 +33,7 @@ export default function RootLayout({
   return (
     <html
       lang="id"
-      className={`${dmSans.variable} ${playfair.variable} h-full antialiased`}
+      className={`${dmSans.variable} ${playfair.variable} ${plusJakarta.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>

@@ -1,17 +1,65 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
-import type { Dictionary } from "@/lib/i18n";
+import type { Locale, Dictionary } from "@/lib/i18n";
+import { getApiUrl } from "@/lib/utils";
+import { STORAGE_KEYS, DATA_SYNC_EVENT, getStoredData, setStoredData } from "@/lib/storage";
 
 type Props = {
   dict: Dictionary;
+  lang?: Locale;
 };
 
-export default function ReviewsPreview({ dict }: Props) {
-  const reviews = dict.reviews.items;
+export default function ReviewsPreview({ dict, lang = "id" }: Props) {
+  const [dynamicReviews, setDynamicReviews] = useState<any[]>([]);
+
+  useEffect(() => {
+    // 1. Initial load from local persistent storage
+    const stored = getStoredData<any[]>(STORAGE_KEYS.REVIEWS, []);
+    if (Array.isArray(stored) && stored.length > 0) {
+      setDynamicReviews(stored.filter((r: any) => Number(r.is_visible) === 1));
+    }
+
+    // 2. Real-time sync listener
+    const handleSync = () => {
+      const updated = getStoredData<any[]>(STORAGE_KEYS.REVIEWS, []);
+      if (Array.isArray(updated) && updated.length > 0) {
+        setDynamicReviews(updated.filter((r: any) => Number(r.is_visible) === 1));
+      }
+    };
+    window.addEventListener(DATA_SYNC_EVENT, handleSync);
+    window.addEventListener("storage", handleSync);
+
+    // 3. Background fetch from API
+    fetch(getApiUrl("/api/ulasan.php"))
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json?.status === "success" && Array.isArray(json.data) && json.data.length > 0) {
+          setDynamicReviews(json.data.filter((r: any) => Number(r.is_visible) === 1));
+          setStoredData(STORAGE_KEYS.REVIEWS, json.data);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      window.removeEventListener(DATA_SYNC_EVENT, handleSync);
+      window.removeEventListener("storage", handleSync);
+    };
+  }, []);
+
+  const reviewsToDisplay = dynamicReviews.length > 0
+    ? dynamicReviews.map((r) => ({
+        name: r.guest_name,
+        origin: r.origin,
+        rating: r.rating,
+        comment: lang === "en" ? r.comment_en : r.comment_id
+      }))
+    : dict.reviews.items;
+
   // Double the reviews for seamless infinite marquee
-  const duplicated = [...reviews, ...reviews];
+  const duplicated = [...reviewsToDisplay, ...reviewsToDisplay];
 
   return (
     <section className="section-padding bg-surface relative overflow-hidden grain-overlay">
@@ -44,7 +92,6 @@ export default function ReviewsPreview({ dict }: Props) {
                 className="w-[320px] sm:w-[380px] flex-shrink-0 p-6 sm:p-7 bg-white rounded-xl border border-border-light shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between"
               >
                 <div>
-                  {/* Decorative quote */}
                   <div className="text-4xl text-gold/30 font-serif leading-none mb-3 select-none">
                     &ldquo;
                   </div>
@@ -54,7 +101,6 @@ export default function ReviewsPreview({ dict }: Props) {
                 </div>
 
                 <div className="mt-5 pt-4 border-t border-border-light">
-                  {/* Stars */}
                   <div className="flex items-center gap-0.5 mb-3">
                     {Array.from({ length: 5 }).map((_, j) => (
                       <Star

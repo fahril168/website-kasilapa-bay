@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Users,
@@ -16,7 +17,9 @@ import {
 } from "lucide-react";
 import SectionHeader from "@/components/SectionHeader";
 import type { Locale, Dictionary } from "@/lib/i18n";
-import { formatPrice, getWhatsAppUrl } from "@/lib/utils";
+import { formatPrice, getWhatsAppUrl, getApiUrl } from "@/lib/utils";
+import { useDynamicSettings } from "@/lib/hooks/useDynamicSettings";
+import { STORAGE_KEYS, DATA_SYNC_EVENT, getStoredData, setStoredData } from "@/lib/storage";
 
 type Props = {
   dict: Dictionary;
@@ -34,14 +37,90 @@ const facilityIcons: Record<string, React.ReactNode> = {
   water: <Droplets size={20} />,
 };
 
-const roomImages = [
-  "/img/rooms/15.webp",
+const defaultRoomImages = [
+  "/img/rooms/1.webp",
   "/img/rooms/2.webp",
 ];
 
 export default function AccommodationContent({ dict, lang }: Props) {
-  const rooms = dict.accommodation.rooms;
-  const facilities = dict.accommodation.facilitiesList;
+  const { whatsappNumber } = useDynamicSettings();
+  const [dynamicRooms, setDynamicRooms] = useState<any[]>([]);
+  const [dynamicFacilities, setDynamicFacilities] = useState<any[]>([]);
+
+  useEffect(() => {
+    // 1. Initial load from local persistent storage
+    const storedRooms = getStoredData<any[]>(STORAGE_KEYS.ROOMS, []);
+    if (Array.isArray(storedRooms) && storedRooms.length > 0) {
+      setDynamicRooms(storedRooms);
+    }
+    const storedFacs = getStoredData<any[]>(STORAGE_KEYS.FACILITIES, []);
+    if (Array.isArray(storedFacs) && storedFacs.length > 0) {
+      setDynamicFacilities(storedFacs);
+    }
+
+    // 2. Real-time sync listener
+    const handleSync = () => {
+      const updatedRooms = getStoredData<any[]>(STORAGE_KEYS.ROOMS, []);
+      if (Array.isArray(updatedRooms) && updatedRooms.length > 0) {
+        setDynamicRooms(updatedRooms);
+      }
+      const updatedFacs = getStoredData<any[]>(STORAGE_KEYS.FACILITIES, []);
+      if (Array.isArray(updatedFacs) && updatedFacs.length > 0) {
+        setDynamicFacilities(updatedFacs);
+      }
+    };
+    window.addEventListener(DATA_SYNC_EVENT, handleSync);
+    window.addEventListener("storage", handleSync);
+
+    // 3. Background fetch from API
+    fetch(getApiUrl("/api/kamar.php"))
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        if (j?.status === "success" && Array.isArray(j.data) && j.data.length > 0) {
+          setDynamicRooms(j.data);
+          setStoredData(STORAGE_KEYS.ROOMS, j.data);
+        }
+      })
+      .catch(() => {});
+
+    fetch(getApiUrl("/api/fasilitas.php"))
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        if (j?.status === "success" && Array.isArray(j.data) && j.data.length > 0) {
+          setDynamicFacilities(j.data);
+          setStoredData(STORAGE_KEYS.FACILITIES, j.data);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      window.removeEventListener(DATA_SYNC_EVENT, handleSync);
+      window.removeEventListener("storage", handleSync);
+    };
+  }, []);
+
+  const roomsToDisplay = dynamicRooms.length > 0
+    ? dynamicRooms.map((r, i) => ({
+        name: lang === "en" ? r.title_en : r.title_id,
+        description: lang === "en" ? r.description_en : r.description_id,
+        capacity: r.capacity,
+        price: Number(r.price_per_night),
+        image: r.image_url || defaultRoomImages[i % defaultRoomImages.length]
+      }))
+    : dict.accommodation.rooms.map((r, i) => ({
+        ...r,
+        image: defaultRoomImages[i % defaultRoomImages.length]
+      }));
+
+  const facilitiesToDisplay = dynamicFacilities.length > 0
+    ? dynamicFacilities.map((f) => ({
+        key: f.icon_name || "wifi",
+        label: lang === "en" ? f.title_en : f.title_id
+      }))
+    : Object.entries(dict.accommodation.facilitiesList).map(([k, label]) => ({
+        key: k,
+        label
+      }));
 
   return (
     <>
@@ -56,7 +135,7 @@ export default function AccommodationContent({ dict, lang }: Props) {
 
           {/* Rooms */}
           <div className="space-y-6 sm:space-y-8">
-            {rooms.map((room, i) => {
+            {roomsToDisplay.map((room, i) => {
               const waMessage =
                 lang === "id"
                   ? `Halo, saya ingin memesan ${room.name} di Kasilapa Bay. Mohon informasikan ketersediaannya.`
@@ -64,7 +143,7 @@ export default function AccommodationContent({ dict, lang }: Props) {
 
               return (
                 <motion.div
-                  key={room.name}
+                  key={room.name + i}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-20px" }}
@@ -73,13 +152,12 @@ export default function AccommodationContent({ dict, lang }: Props) {
                 >
                   {/* Image */}
                   <div
-                    className={`aspect-[4/3] lg:aspect-auto relative overflow-hidden ${i % 2 === 1 ? "lg:order-2" : ""
-                      }`}
+                    className={`aspect-[4/3] lg:aspect-auto relative overflow-hidden ${i % 2 === 1 ? "lg:order-2" : ""}`}
                   >
                     <div
                       className="w-full h-full min-h-[240px] sm:min-h-[320px] group-hover:scale-105 transition-transform duration-700 ease-out"
                       style={{
-                        backgroundImage: `url('${roomImages[i] || roomImages[0]}')`,
+                        backgroundImage: `url('${room.image}')`,
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                       }}
@@ -114,7 +192,7 @@ export default function AccommodationContent({ dict, lang }: Props) {
                         </span>
                       </div>
                       <a
-                        href={getWhatsAppUrl(waMessage)}
+                        href={getWhatsAppUrl(waMessage, whatsappNumber)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn-gold text-xs"
@@ -137,9 +215,9 @@ export default function AccommodationContent({ dict, lang }: Props) {
           <SectionHeader label={dict.accommodation.title} title={dict.accommodation.facilities} />
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5 max-w-4xl mx-auto">
-            {Object.entries(facilities).map(([key, label], i) => (
+            {facilitiesToDisplay.map((fac, i) => (
               <motion.div
-                key={key}
+                key={fac.label + i}
                 initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -147,10 +225,10 @@ export default function AccommodationContent({ dict, lang }: Props) {
                 className="flex flex-col items-center text-center gap-3 p-5 sm:p-6 bg-white border border-border-light hover:border-gold/40 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
               >
                 <div className="text-gold">
-                  {facilityIcons[key] || <Waves size={20} />}
+                  {facilityIcons[fac.key] || <Waves size={20} />}
                 </div>
                 <span className="text-sm font-semibold text-foreground tracking-wide">
-                  {label}
+                  {fac.label}
                 </span>
               </motion.div>
             ))}

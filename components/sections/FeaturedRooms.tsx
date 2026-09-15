@@ -1,22 +1,70 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Users } from "lucide-react";
 import type { Locale, Dictionary } from "@/lib/i18n";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, getApiUrl } from "@/lib/utils";
+import { STORAGE_KEYS, DATA_SYNC_EVENT, getStoredData, setStoredData } from "@/lib/storage";
 
 type Props = {
   dict: Dictionary;
   lang: Locale;
 };
 
-const roomImages = ["/img/rooms/15.webp", "/img/rooms/2.webp"];
+const defaultRoomImages = ["/img/rooms/1.webp", "/img/rooms/2.webp"];
 
 export default function FeaturedRooms({ dict, lang }: Props) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const rooms = dict.accommodation.rooms.slice(0, 2);
+  const [dynamicRooms, setDynamicRooms] = useState<any[]>([]);
+
+  useEffect(() => {
+    // 1. Initial load from local persistent storage
+    const stored = getStoredData<any[]>(STORAGE_KEYS.ROOMS, []);
+    if (Array.isArray(stored) && stored.length > 0) {
+      setDynamicRooms(stored.slice(0, 2));
+    }
+
+    // 2. Real-time sync listener
+    const handleSync = () => {
+      const updated = getStoredData<any[]>(STORAGE_KEYS.ROOMS, []);
+      if (Array.isArray(updated) && updated.length > 0) {
+        setDynamicRooms(updated.slice(0, 2));
+      }
+    };
+    window.addEventListener(DATA_SYNC_EVENT, handleSync);
+    window.addEventListener("storage", handleSync);
+
+    // 3. Background fetch from API
+    fetch(getApiUrl("/api/kamar.php"))
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json?.status === "success" && Array.isArray(json.data) && json.data.length > 0) {
+          setDynamicRooms(json.data.slice(0, 2));
+          setStoredData(STORAGE_KEYS.ROOMS, json.data);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      window.removeEventListener(DATA_SYNC_EVENT, handleSync);
+      window.removeEventListener("storage", handleSync);
+    };
+  }, []);
+
+  const roomsToDisplay = dynamicRooms.length > 0
+    ? dynamicRooms.map((r, i) => ({
+        name: lang === "en" ? r.title_en : r.title_id,
+        description: lang === "en" ? r.description_en : r.description_id,
+        capacity: r.capacity,
+        price: Number(r.price_per_night),
+        image: r.image_url || defaultRoomImages[i % defaultRoomImages.length]
+      }))
+    : dict.accommodation.rooms.slice(0, 2).map((r, i) => ({
+        ...r,
+        image: defaultRoomImages[i % defaultRoomImages.length]
+      }));
 
   return (
     <section className="section-padding bg-dark-warm relative grain-overlay">
@@ -49,9 +97,9 @@ export default function FeaturedRooms({ dict, lang }: Props) {
 
         {/* Two rooms side by side */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
-          {rooms.map((room, i) => (
+          {roomsToDisplay.map((room, i) => (
             <motion.div
-              key={room.name}
+              key={room.name + i}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
@@ -64,10 +112,10 @@ export default function FeaturedRooms({ dict, lang }: Props) {
               {/* Background image */}
               <div
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
-                style={{ backgroundImage: `url('${roomImages[i]}')` }}
+                style={{ backgroundImage: `url('${room.image}')` }}
               />
 
-              {/* Gradient overlay — darker on hover */}
+              {/* Gradient overlay */}
               <div
                 className="absolute inset-0 transition-all duration-500"
                 style={{
@@ -80,12 +128,10 @@ export default function FeaturedRooms({ dict, lang }: Props) {
 
               {/* Content overlay */}
               <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8 z-10">
-                {/* Room name */}
                 <h3 className="text-2xl sm:text-3xl font-bold text-white font-serif mb-2 drop-shadow-lg">
                   {room.name}
                 </h3>
 
-                {/* Description — reveal on hover */}
                 <motion.p
                   initial={false}
                   animate={{
@@ -99,7 +145,6 @@ export default function FeaturedRooms({ dict, lang }: Props) {
                   {room.description}
                 </motion.p>
 
-                {/* Specs row */}
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-3 mb-4">
                   <span className="flex items-center gap-1.5 text-white/60 text-xs font-medium">
                     <Users size={14} className="text-gold/80" />
@@ -107,10 +152,8 @@ export default function FeaturedRooms({ dict, lang }: Props) {
                   </span>
                 </div>
 
-                {/* Divider */}
                 <div className="w-full h-px bg-white/10 mb-4" />
 
-                {/* Price & CTA */}
                 <div className="flex items-end justify-between gap-4">
                   <div>
                     <p className="text-xl sm:text-2xl font-bold text-gold font-sans leading-none">

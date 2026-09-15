@@ -1,14 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import { MapPin, Phone, Mail } from "lucide-react";
-import type { Locale } from "@/lib/i18n";
-import type { Dictionary } from "@/lib/i18n";
+import type { Locale, Dictionary } from "@/lib/i18n";
+import { useDynamicSettings } from "@/lib/hooks/useDynamicSettings";
 
 type FooterProps = {
   lang: Locale;
   dict: Dictionary;
 };
-
-const WHATSAPP_NUMBER = "6282112345678";
 
 const navKeys = [
   { key: "home", href: "" },
@@ -20,6 +20,7 @@ const navKeys = [
 ] as const;
 
 export default function Footer({ lang, dict }: FooterProps) {
+  const { whatsappNumber, email, address, instagramUrl, facebookUrl, tiktokUrl } = useDynamicSettings();
   const year = new Date().getFullYear();
 
   return (
@@ -64,24 +65,24 @@ export default function Footer({ lang, dict }: FooterProps) {
             </p>
             <div className="flex flex-col gap-4">
               <a
-                href={`https://wa.me/${WHATSAPP_NUMBER}`}
+                href={`https://wa.me/${whatsappNumber}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-start gap-3 text-sm text-white/50 hover:text-gold font-medium transition-colors duration-200"
               >
                 <Phone size={16} className="mt-0.5 shrink-0 text-gold/70" />
-                <span>+62 821-1234-5678</span>
+                <span>+{whatsappNumber}</span>
               </a>
               <a
-                href="mailto:hello@kasilapabay.com"
+                href={`mailto:${email}`}
                 className="flex items-start gap-3 text-sm text-white/50 hover:text-gold font-medium transition-colors duration-200"
               >
                 <Mail size={16} className="mt-0.5 shrink-0 text-gold/70" />
-                <span>hello@kasilapabay.com</span>
+                <span>{email}</span>
               </a>
               <div className="flex items-start gap-3 text-sm text-white/50 font-normal">
                 <MapPin size={16} className="mt-0.5 shrink-0 text-gold/70" />
-                <span>{dict.contact.addressValue}</span>
+                <span>{address}</span>
               </div>
             </div>
           </div>
@@ -93,7 +94,7 @@ export default function Footer({ lang, dict }: FooterProps) {
             </p>
             <div className="flex flex-col gap-3">
               <a
-                href="https://instagram.com/kasilapabay"
+                href={instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm text-white/50 hover:text-gold font-medium transition-colors duration-200"
@@ -101,7 +102,7 @@ export default function Footer({ lang, dict }: FooterProps) {
                 Instagram
               </a>
               <a
-                href="https://facebook.com/kasilapabay"
+                href={facebookUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm text-white/50 hover:text-gold font-medium transition-colors duration-200"
@@ -109,7 +110,7 @@ export default function Footer({ lang, dict }: FooterProps) {
                 Facebook
               </a>
               <a
-                href="https://tiktok.com/@kasilapabay"
+                href={tiktokUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm text-white/50 hover:text-gold font-medium transition-colors duration-200"

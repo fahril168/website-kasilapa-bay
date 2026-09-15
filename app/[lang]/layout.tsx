@@ -19,6 +19,9 @@ export async function generateMetadata({
   params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
   const { lang } = await params;
+  if (!i18n.locales.includes(lang as Locale)) {
+    return { title: "Kasilapa Bay" };
+  }
   const dict = await getDictionary(lang as Locale);
   return {
     title: dict.meta.title,

@@ -4,12 +4,15 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n";
 import { getWhatsAppUrl } from "@/lib/utils";
+import { useDynamicSettings } from "@/lib/hooks/useDynamicSettings";
 
 type Props = {
   dict: Dictionary;
 };
 
 export default function CtaBanner({ dict }: Props) {
+  const { whatsappNumber } = useDynamicSettings();
+
   return (
     <section className="relative py-24 sm:py-32 lg:py-40 overflow-hidden">
       {/* Background image */}
@@ -55,7 +58,7 @@ export default function CtaBanner({ dict }: Props) {
           </p>
 
           <a
-            href={getWhatsAppUrl(dict.contact.whatsappMessage)}
+            href={getWhatsAppUrl(dict.contact.whatsappMessage, whatsappNumber)}
             target="_blank"
             rel="noopener noreferrer"
             className="btn-gold shadow-lg"

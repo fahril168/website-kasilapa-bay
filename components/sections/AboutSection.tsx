@@ -3,10 +3,12 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { Dictionary } from "@/lib/i18n";
+import type { Dictionary, Locale } from "@/lib/i18n";
+import { useDynamicSettings } from "@/lib/hooks/useDynamicSettings";
 
 type Props = {
   dict: Dictionary;
+  lang?: Locale;
 };
 
 const roomImages = [
@@ -23,13 +25,22 @@ const stats = [
   { value: "4.9", labelId: "Rating Tamu", labelEn: "Guest Rating" },
 ];
 
-export default function AboutSection({ dict }: Props) {
+export default function AboutSection({ dict, lang = "id" }: Props) {
+  const { settings } = useDynamicSettings();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [stepWidth, setStepWidth] = useState(300);
 
-  // Update step width dynamically on mount & window resize
+  // Dynamic Headline and Description from Hostinger MySQL API
+  const dynamicHeadline = lang === "en" 
+    ? (settings?.about_headline_en || dict.about.headline)
+    : (settings?.about_headline_id || dict.about.headline);
+
+  const dynamicDescription = lang === "en"
+    ? (settings?.about_description_en || dict.about.description)
+    : (settings?.about_description_id || dict.about.description);
+
   useEffect(() => {
     const updateWidth = () => {
       if (containerRef.current) {
@@ -43,7 +54,6 @@ export default function AboutSection({ dict }: Props) {
     return () => window.removeEventListener("resize", updateWidth);
   }, []);
 
-  // Auto-play interval
   useEffect(() => {
     if (isHovered) return;
     const timer = setInterval(() => {
@@ -66,15 +76,15 @@ export default function AboutSection({ dict }: Props) {
           >
             <span className="label-accent">Kasilapa Bay</span>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-foreground leading-[1.12] mb-6 tracking-tight">
-              {dict.about.headline}
+            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-foreground leading-[1.12] mb-6 tracking-tight font-serif">
+              {dynamicHeadline}
             </h2>
 
             {/* Gold accent divider */}
             <div className="w-12 h-0.5 bg-gold mb-6" />
 
             <p className="text-muted text-base sm:text-lg leading-relaxed font-normal mb-10">
-              {dict.about.description}
+              {dynamicDescription}
             </p>
 
             {/* Stats row */}
@@ -85,14 +95,14 @@ export default function AboutSection({ dict }: Props) {
                     {stat.value}
                   </p>
                   <p className="text-xs text-muted font-medium tracking-wide mt-1">
-                    {stat.labelId}
+                    {lang === "en" ? stat.labelEn : stat.labelId}
                   </p>
                 </div>
               ))}
             </div>
           </motion.div>
 
-          {/* Right Column: Image Track (No drag to avoid glitches) */}
+          {/* Right Column: Image Track */}
           <motion.div
             ref={containerRef}
             initial={{ opacity: 0, x: 30 }}
@@ -103,9 +113,7 @@ export default function AboutSection({ dict }: Props) {
             onMouseLeave={() => setIsHovered(false)}
             className="lg:col-span-7 relative w-full overflow-visible select-none group"
           >
-            {/* Overflow wrapper extends to the right edge of the viewport */}
             <div className="overflow-hidden w-full lg:w-[calc(100%+20vw)] lg:pr-[20vw]">
-              {/* Sliding Track without drag */}
               <motion.div
                 animate={{ x: -currentIndex * stepWidth }}
                 transition={{ duration: 0.6, ease: [0.32, 0.72, 0, 1] }}
@@ -127,7 +135,7 @@ export default function AboutSection({ dict }: Props) {
               </motion.div>
             </div>
 
-            {/* Navigation Controls: Arrows + Dots */}
+            {/* Navigation Controls */}
             <div className="absolute bottom-4 left-0 w-[83%] flex items-center justify-between px-4 z-30 pointer-events-auto">
               <button
                 onClick={() =>
