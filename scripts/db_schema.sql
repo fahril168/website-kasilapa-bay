@@ -3,8 +3,10 @@
 -- 100% Matched with current Kasilapa Bay website content (id.json & en.json)
 -- ==============================================================================
 
-CREATE DATABASE IF NOT EXISTS `kasilapa_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `kasilapa_db`;
+-- Note: Di Hostinger phpMyAdmin, pilih database Anda terlebih dahulu sebelum import.
+-- Baris CREATE DATABASE dan USE di-comment agar tidak terjadi error 'Access Denied' pada shared hosting.
+-- CREATE DATABASE IF NOT EXISTS `kasilapa_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- USE `kasilapa_db`;
 
 -- 1. Table: admin_users (Stores Admin credentials securely with BCRYPT hash)
 CREATE TABLE IF NOT EXISTS `admin_users` (

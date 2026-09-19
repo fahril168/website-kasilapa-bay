@@ -17,11 +17,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// Database Credentials (XAMPP / Hostinger MySQL)
+// Database Credentials (Hostinger MySQL)
 define('DB_HOST', 'localhost');
-define('DB_USER', 'root');     // Hostinger / XAMPP MySQL Username
-define('DB_PASS', '');         // Hostinger / XAMPP MySQL Password
-define('DB_NAME', 'kasilapa_db'); // Hostinger / XAMPP MySQL Database Name
+define('DB_USER', 'u552286068_admin');       // Username MySQL Hostinger
+define('DB_PASS', 'Riel2323'); // <-- GANTI DENGAN PASSWORD DATABASE ANDA
+define('DB_NAME', 'u552286068_kasilapa');    // Nama Database MySQL Hostinger
 
 // Function to establish PDO Database Connection
 function getDbConnection() {
