@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "php": "C:\\xampp\\php\\php.exe -S localhost:8000 -t public",
     "build": "next build",
+    "package": "node scripts/package-deploy.js",
     "start": "next start",
     "lint": "eslint"
   },

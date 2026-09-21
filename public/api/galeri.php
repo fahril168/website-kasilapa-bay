@@ -1,69 +1,146 @@
 <?php
 // ==============================================================================
 // Kasilapa Bay - Gallery API Endpoint
+// Powered by Centralized Media Library (images table)
+// Backward-compatible for legacy frontend readers with thumbnail_url support
 // ==============================================================================
 
 require_once __DIR__ . '/config.php';
 
 $pdo = getDbConnection();
-$method = $_SERVER['REQUEST_METHOD'];
+$method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
 
 switch ($method) {
     case 'GET':
-        $activeOnly = isset($_GET['active_only']) && ($_GET['active_only'] === '1' || $_GET['active_only'] === 'true');
-        
-        try {
-            if ($activeOnly) {
-                $stmt = $pdo->query("SELECT * FROM gallery WHERE is_active = 1 ORDER BY id ASC");
-            } else {
-                $stmt = $pdo->query("SELECT * FROM gallery ORDER BY id ASC");
-            }
-            $data = $stmt->fetchAll();
-        } catch (PDOException $e) {
-            // Fallback if is_active column doesn't exist yet in legacy db
-            $stmt = $pdo->query("SELECT * FROM gallery ORDER BY id ASC");
-            $data = $stmt->fetchAll();
+        // Determine whether to show all (admin/manage view) or active only (public view)
+        $showAll = isset($_GET['all']) && ($_GET['all'] === '1' || $_GET['all'] === 'true');
+        $category = isset($_GET['category']) ? trim($_GET['category']) : '';
+
+        $whereClauses = [];
+        $params = [];
+
+        if (!$showAll) {
+            $whereClauses[] = "is_active = 1";
         }
 
-        echo json_encode(["status" => "success", "data" => $data]);
+        if (!empty($category) && $category !== 'all') {
+            $whereClauses[] = "category = :category";
+            $params['category'] = $category;
+        }
+
+        $whereSql = !empty($whereClauses) ? "WHERE " . implode(" AND ", $whereClauses) : "";
+        $sql = "SELECT * FROM images $whereSql ORDER BY id DESC";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $rawRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Normalize and map fields for complete frontend compatibility
+        $normalized = array_map(function ($row) {
+            $fallbackTitle = !empty($row['filename']) 
+                ? pathinfo($row['filename'], PATHINFO_FILENAME) 
+                : (!empty($row['alt_text_id']) ? $row['alt_text_id'] : 'Foto Kasilapa');
+            
+            $titleId = !empty($row['alt_text_id']) ? $row['alt_text_id'] : $fallbackTitle;
+            $titleEn = !empty($row['alt_text_en']) ? $row['alt_text_en'] : $titleId;
+            $thumb = !empty($row['thumbnail_url']) ? $row['thumbnail_url'] : $row['url'];
+
+            return [
+                'id' => (int)$row['id'],
+                'title_id' => $titleId,
+                'title_en' => $titleEn,
+                'category' => !empty($row['category']) ? $row['category'] : 'property',
+                'url' => $row['url'],
+                'image_url' => $row['url'], // Backward compatibility
+                'thumbnail_url' => $thumb,
+                'thumb_url' => $thumb,       // Shorthand convenience
+                'is_active' => (int)$row['is_active'],
+                'source' => $row['source'],
+                'filename' => $row['filename'],
+                'uploaded_at' => $row['uploaded_at']
+            ];
+        }, $rawRows);
+
+        echo json_encode(["status" => "success", "data" => $normalized]);
         break;
 
     case 'POST':
         verifyAdminToken();
         $input = json_decode(file_get_contents('php://input'), true);
 
-        if (empty($input['image_url'])) {
+        $imageUrl = $input['image_url'] ?? ($input['url'] ?? '');
+        if (empty($imageUrl)) {
             http_response_code(400);
-            echo json_encode(["status" => "error", "message" => "Image URL is required."]);
+            echo json_encode(["status" => "error", "message" => "Image URL wajib diisi."]);
             exit();
         }
 
+        $titleId = $input['title_id'] ?? ($input['alt_text_id'] ?? 'Foto Galeri');
+        $titleEn = $input['title_en'] ?? ($input['alt_text_en'] ?? $titleId);
+        $category = $input['category'] ?? 'property';
+        $thumbUrl = $input['thumbnail_url'] ?? $imageUrl;
         $isActive = isset($input['is_active']) ? (int)$input['is_active'] : 1;
+        $source = (strpos($imageUrl, 'http://') === 0 || strpos($imageUrl, 'https://') === 0) ? 'external' : 'upload';
 
-        try {
-            $sql = "INSERT INTO gallery (title_id, title_en, category, image_url, is_active) VALUES (:title_id, :title_en, :category, :image_url, :is_active)";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([
-                'title_id' => $input['title_id'] ?? 'Foto Galeri',
-                'title_en' => $input['title_en'] ?? ($input['title_id'] ?? 'Gallery Photo'),
-                'category' => $input['category'] ?? 'property',
-                'image_url' => $input['image_url'],
-                'is_active' => $isActive
-            ]);
-        } catch (PDOException $e) {
-            // Fallback for legacy table without is_active column
-            $sql = "INSERT INTO gallery (title_id, title_en, category, image_url) VALUES (:title_id, :title_en, :category, :image_url)";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([
-                'title_id' => $input['title_id'] ?? 'Foto Galeri',
-                'title_en' => $input['title_en'] ?? ($input['title_id'] ?? 'Gallery Photo'),
-                'category' => $input['category'] ?? 'property',
-                'image_url' => $input['image_url']
-            ]);
+        // Check if an image record with this ID or URL already exists in 'images' table (e.g. just uploaded via upload.php)
+        $existingImage = null;
+        if (!empty($input['id'])) {
+            $chk = $pdo->prepare("SELECT id FROM images WHERE id = :id LIMIT 1");
+            $chk->execute(['id' => (int)$input['id']]);
+            $existingImage = $chk->fetch();
+        }
+        if (!$existingImage && !empty($imageUrl)) {
+            $chk = $pdo->prepare("SELECT id FROM images WHERE url = :url LIMIT 1");
+            $chk->execute(['url' => $imageUrl]);
+            $existingImage = $chk->fetch();
         }
 
+        if ($existingImage) {
+            // Update existing image record with user-provided title, category, and active status
+            $updStmt = $pdo->prepare("
+                UPDATE images 
+                SET alt_text_id = :alt_id, alt_text_en = :alt_en, category = :cat, is_active = :act, thumbnail_url = :thumb 
+                WHERE id = :id
+            ");
+            $updStmt->execute([
+                'alt_id' => $titleId,
+                'alt_en' => $titleEn,
+                'cat' => $category,
+                'act' => $isActive,
+                'thumb' => $thumbUrl,
+                'id' => (int)$existingImage['id']
+            ]);
+
+            http_response_code(200);
+            echo json_encode([
+                "status" => "success", 
+                "message" => "Foto galeri berhasil disimpan ke Media Library.", 
+                "id" => (int)$existingImage['id']
+            ]);
+            break;
+        }
+
+        // Otherwise insert new record
+        $sql = "INSERT INTO images (filename, url, thumbnail_url, alt_text_id, alt_text_en, source, category, is_active) 
+                VALUES (:fn, :url, :thumb, :alt_id, :alt_en, :src, :cat, :act)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            'fn' => basename($imageUrl),
+            'url' => $imageUrl,
+            'thumb' => $thumbUrl,
+            'alt_id' => $titleId,
+            'alt_en' => $titleEn,
+            'src' => $source,
+            'cat' => $category,
+            'act' => $isActive
+        ]);
+
         http_response_code(201);
-        echo json_encode(["status" => "success", "message" => "Foto galeri berhasil ditambahkan.", "id" => $pdo->lastInsertId()]);
+        echo json_encode([
+            "status" => "success", 
+            "message" => "Foto galeri berhasil ditambahkan ke Media Library.", 
+            "id" => (int)$pdo->lastInsertId()
+        ]);
         break;
 
     case 'PUT':
@@ -72,64 +149,56 @@ switch ($method) {
 
         if (empty($input['id'])) {
             http_response_code(400);
-            echo json_encode(["status" => "error", "message" => "Gallery item ID is required."]);
+            echo json_encode(["status" => "error", "message" => "Image ID wajib diisi untuk update."]);
             exit();
         }
 
-        // Check if only is_active is being updated (toggle)
-        if (isset($input['is_active']) && !isset($input['title_id']) && !isset($input['image_url'])) {
-            try {
-                $stmt = $pdo->prepare("UPDATE gallery SET is_active = :is_active WHERE id = :id");
-                $stmt->execute([
-                    'id' => $input['id'],
-                    'is_active' => (int)$input['is_active']
-                ]);
-            } catch (PDOException $e) {
-                // Legacy schema ignore
-            }
-            echo json_encode(["status" => "success", "message" => "Status foto galeri berhasil diperbarui."]);
+        $id = (int)$input['id'];
+
+        // Check if only is_active toggle is requested
+        if (isset($input['is_active']) && !isset($input['category']) && !isset($input['title_id']) && !isset($input['image_url'])) {
+            $stmt = $pdo->prepare("UPDATE images SET is_active = :is_active WHERE id = :id");
+            $stmt->execute([
+                'id' => $id,
+                'is_active' => (int)$input['is_active']
+            ]);
+            echo json_encode(["status" => "success", "message" => "Status aktif foto berhasil diperbarui."]);
             break;
         }
 
         // Full update
-        $isActive = isset($input['is_active']) ? (int)$input['is_active'] : 1;
+        $updates = [];
+        $params = ['id' => $id];
 
-        try {
-            $sql = "UPDATE gallery SET 
-                        title_id = :title_id, 
-                        title_en = :title_en, 
-                        category = :category, 
-                        image_url = :image_url, 
-                        is_active = :is_active 
-                    WHERE id = :id";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([
-                'id' => $input['id'],
-                'title_id' => $input['title_id'] ?? 'Foto Galeri',
-                'title_en' => $input['title_en'] ?? ($input['title_id'] ?? 'Gallery Photo'),
-                'category' => $input['category'] ?? 'property',
-                'image_url' => $input['image_url'],
-                'is_active' => $isActive
-            ]);
-        } catch (PDOException $e) {
-            // Fallback for legacy schema
-            $sql = "UPDATE gallery SET 
-                        title_id = :title_id, 
-                        title_en = :title_en, 
-                        category = :category, 
-                        image_url = :image_url 
-                    WHERE id = :id";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([
-                'id' => $input['id'],
-                'title_id' => $input['title_id'] ?? 'Foto Galeri',
-                'title_en' => $input['title_en'] ?? ($input['title_id'] ?? 'Gallery Photo'),
-                'category' => $input['category'] ?? 'property',
-                'image_url' => $input['image_url']
-            ]);
+        if (isset($input['is_active'])) {
+            $updates[] = "is_active = :is_active";
+            $params['is_active'] = (int)$input['is_active'];
+        }
+        if (isset($input['category'])) {
+            $updates[] = "category = :category";
+            $params['category'] = trim($input['category']);
+        }
+        if (isset($input['title_id'])) {
+            $updates[] = "alt_text_id = :alt_text_id";
+            $params['alt_text_id'] = trim($input['title_id']);
+        }
+        if (isset($input['title_en'])) {
+            $updates[] = "alt_text_en = :alt_text_en";
+            $params['alt_text_en'] = trim($input['title_en']);
+        }
+        if (isset($input['image_url']) || isset($input['url'])) {
+            $newUrl = $input['image_url'] ?? $input['url'];
+            $updates[] = "url = :url";
+            $params['url'] = $newUrl;
         }
 
-        echo json_encode(["status" => "success", "message" => "Foto galeri berhasil diperbarui."]);
+        if (!empty($updates)) {
+            $sql = "UPDATE images SET " . implode(", ", $updates) . " WHERE id = :id";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+        }
+
+        echo json_encode(["status" => "success", "message" => "Data foto galeri berhasil diperbarui."]);
         break;
 
     case 'DELETE':
@@ -139,20 +208,23 @@ switch ($method) {
 
         if (!$id) {
             http_response_code(400);
-            echo json_encode(["status" => "error", "message" => "Gallery item ID is required."]);
+            echo json_encode(["status" => "error", "message" => "Image ID wajib diisi."]);
             exit();
         }
 
-        $fetchStmt = $pdo->prepare("SELECT image_url FROM gallery WHERE id = :id LIMIT 1");
-        $fetchStmt->execute(['id' => $id]);
-        $item = $fetchStmt->fetch();
-        if ($item && !empty($item['image_url'])) {
-            deleteUploadedImage($item['image_url']);
-        }
+        $imageId = (int)$id;
 
-        $stmt = $pdo->prepare("DELETE FROM gallery WHERE id = :id");
-        $stmt->execute(['id' => $id]);
-        echo json_encode(["status" => "success", "message" => "Foto galeri berhasil dihapus."]);
+        // Detach relations from rooms and destinations
+        $pdo->prepare("DELETE FROM room_images WHERE image_id = :id")->execute(['id' => $imageId]);
+        $pdo->prepare("DELETE FROM destination_images WHERE image_id = :id")->execute(['id' => $imageId]);
+
+        // Safely delete physical file from disk if uploaded
+        deleteUploadedImage($imageId);
+
+        // Delete permanently from images table
+        $pdo->prepare("DELETE FROM images WHERE id = :id")->execute(['id' => $imageId]);
+
+        echo json_encode(["status" => "success", "message" => "Foto berhasil dihapus secara permanen dari galeri dan database."]);
         break;
 
     default:

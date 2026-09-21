@@ -6,9 +6,9 @@ Kasilapa Bay offers peaceful beachfront lodging in Kasilapa Village, Tomia Islan
 
 ## Information & Services
 
-- [Home](https://kasilapabay.vercel.app/id): Main homepage with resort overview and featured rooms.
-- [Accommodation](https://kasilapabay.vercel.app/id/akomodasi): Room types (Deluxe Junior Suite, Deluxe Room, Deluxe Double) and facilities.
-- [Destinations](https://kasilapabay.vercel.app/id/destinasi): Nearby tourist destinations in Tomia Island (Hondue Beach, Kahianga Peak, Roma Diving, Nata Fortress, Huntete Beach, Patua Fortress).
-- [Gallery](https://kasilapabay.vercel.app/id/galeri): Photos of homestay property, underwater diving, and island scenery.
-- [Reviews](https://kasilapabay.vercel.app/id/ulasan): Guest reviews and testimonials.
-- [Contact](https://kasilapabay.vercel.app/id/kontak): Contact details, WhatsApp booking, and location map.
+- [Home](https://kasilapahotel.com/id): Main homepage with resort overview and featured rooms.
+- [Accommodation](https://kasilapahotel.com/id/akomodasi): Room types (Deluxe Junior Suite, Deluxe Room, Deluxe Double) and facilities.
+- [Destinations](https://kasilapahotel.com/id/destinasi): Nearby tourist destinations in Tomia Island (Hondue Beach, Kahianga Peak, Roma Diving, Nata Fortress, Huntete Beach, Patua Fortress).
+- [Gallery](https://kasilapahotel.com/id/galeri): Photos of homestay property, underwater diving, and island scenery.
+- [Reviews](https://kasilapahotel.com/id/ulasan): Guest reviews and testimonials.
+- [Contact](https://kasilapahotel.com/id/kontak): Contact details, WhatsApp booking, and location map.

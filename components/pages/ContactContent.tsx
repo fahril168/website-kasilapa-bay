@@ -1,10 +1,31 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Phone, Mail, MapPin, MessageSquare, ArrowRight } from "lucide-react";
+import { Phone, MapPin, MessageSquare, ArrowRight } from "lucide-react";
 import SectionHeader from "@/components/SectionHeader";
 import type { Locale, Dictionary } from "@/lib/i18n";
-import { WHATSAPP_NUMBER, getWhatsAppUrl } from "@/lib/utils";
+import { getWhatsAppUrl, formatPhoneNumber } from "@/lib/utils";
+import { useDynamicContacts } from "@/lib/hooks/useDynamicSettings";
+
+function InstagramIcon({ size = 20, className = "" }: { size?: number; className?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
 
 type Props = {
   dict: Dictionary;
@@ -12,6 +33,8 @@ type Props = {
 };
 
 export default function ContactContent({ dict }: Props) {
+  const { phonePrimary, phoneSecondary, instagramUrl, instagramUsername, address } = useDynamicContacts();
+
   return (
     <section className="pt-16 section-padding bg-background">
       <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
@@ -39,7 +62,7 @@ export default function ContactContent({ dict }: Props) {
                 {dict.contact.subtitle}
               </p>
               <a
-                href={getWhatsAppUrl(dict.contact.whatsappMessage)}
+                href={getWhatsAppUrl(dict.contact.whatsappMessage, phonePrimary)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-gold text-xs"
@@ -52,44 +75,79 @@ export default function ContactContent({ dict }: Props) {
 
             {/* Contact Info */}
             <div className="space-y-6 px-2">
+              {/* Nomor Utama */}
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-gold-light border border-border-light text-gold rounded-lg">
+                <div className="p-3 bg-gold-light border border-border-light text-gold rounded-lg shrink-0">
                   <Phone size={20} />
                 </div>
                 <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <p className="text-xs uppercase font-bold tracking-wider text-muted-light">
+                      {dict.contact.phonePrimary}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <a
+                      href={`https://wa.me/${phonePrimary}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-foreground text-base font-bold hover:text-gold transition-colors"
+                    >
+                      {formatPhoneNumber(phonePrimary)}
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Nomor Kedua / Cadangan */}
+              {phoneSecondary ? (
+                <div className="flex items-start gap-4">
+                  <div className="p-3 bg-gold-light border border-border-light text-gold rounded-lg shrink-0">
+                    <Phone size={20} />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="text-xs uppercase font-bold tracking-wider text-muted-light">
+                        {dict.contact.phoneSecondary}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <a
+                        href={`https://wa.me/${phoneSecondary}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-foreground text-base font-bold hover:text-gold transition-colors"
+                      >
+                        {formatPhoneNumber(phoneSecondary)}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+
+              {/* Instagram */}
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-gold-light border border-border-light text-gold rounded-lg shrink-0">
+                  <InstagramIcon size={20} />
+                </div>
+                <div>
                   <p className="text-xs uppercase font-bold tracking-wider text-muted-light mb-1">
-                    {dict.contact.phone}
+                    {dict.contact.instagram || "Instagram"}
                   </p>
                   <a
-                    href={`https://wa.me/${WHATSAPP_NUMBER}`}
+                    href={instagramUrl || "https://instagram.com/kasilapahoteltomia"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-foreground text-base font-bold hover:text-gold transition-colors"
                   >
-                    +62 821-1234-5678
+                    {instagramUsername || "@kasilapahoteltomia"}
                   </a>
                 </div>
               </div>
 
+              {/* Alamat */}
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-gold-light border border-border-light text-gold rounded-lg">
-                  <Mail size={20} />
-                </div>
-                <div>
-                  <p className="text-xs uppercase font-bold tracking-wider text-muted-light mb-1">
-                    {dict.contact.email}
-                  </p>
-                  <a
-                    href="mailto:hello@kasilapabay.com"
-                    className="text-foreground text-base font-bold hover:text-gold transition-colors"
-                  >
-                    hello@kasilapabay.com
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-gold-light border border-border-light text-gold rounded-lg">
+                <div className="p-3 bg-gold-light border border-border-light text-gold rounded-lg shrink-0">
                   <MapPin size={20} />
                 </div>
                 <div>
@@ -97,7 +155,7 @@ export default function ContactContent({ dict }: Props) {
                     {dict.contact.address}
                   </p>
                   <p className="text-foreground text-sm leading-relaxed font-medium">
-                    {dict.contact.addressValue}
+                    {address || dict.contact.addressValue}
                   </p>
                 </div>
               </div>

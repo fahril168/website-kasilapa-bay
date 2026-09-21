@@ -13,19 +13,18 @@ type Props = {
   lang?: Locale;
 };
 
-const defaultRoomGalleryImages = Array.from({ length: 34 }, (_, i) => ({
-  src: `/img/rooms/${i + 1}.webp`,
-  category: "property" as const,
-  alt: `Penginapan Kasilapa Bay ${i + 1}`,
-}));
+const defaultRoomGalleryImages = [
+  { src: "/img/room.webp", category: "property" as const, alt: "Standart Room" },
+  { src: "/img/hero.webp", category: "property" as const, alt: "Deluxe Room" },
+];
 
 const defaultDestinationGalleryImages = [
-  { src: "/img/destinations/hondue.webp", category: "island" as const, alt: "Pantai Hondue" },
-  { src: "/img/destinations/kahianga.webp", category: "island" as const, alt: "Puncak Kahianga" },
-  { src: "/img/destinations/roma.webp", category: "underwater" as const, alt: "Spot Diving Roma" },
-  { src: "/img/destinations/nata.webp", category: "island" as const, alt: "Benteng Nata" },
-  { src: "/img/destinations/huntete.webp", category: "island" as const, alt: "Pantai Huntete" },
-  { src: "/img/destinations/patua.webp", category: "island" as const, alt: "Benteng Patua" },
+  { src: "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Puncak-Kahianga-by-Amal-Hermawan-428x242.jpg", category: "island" as const, alt: "Puncak Kahianga" },
+  { src: "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Huuntete-Beach-Kulati-by-Muis-Bhojest-min-428x242.jpg", category: "island" as const, alt: "Pantai Huntete" },
+  { src: "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Roma-by-Wakatobi-Regency-428x242.jpg", category: "underwater" as const, alt: "Spot Diving Roma" },
+  { src: "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Ndaa-Island-by-Guntur-2-428x242.jpg", category: "island" as const, alt: "Pulau Nda'a" },
+  { src: "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Patua-Fort-by-Amal-Hermawan-428x242.jpg", category: "island" as const, alt: "Benteng Patua" },
+  { src: "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Wreck-Kulati-by-Guntur-428x242.jpg", category: "underwater" as const, alt: "Wreck of Kulati" },
 ];
 
 const defaultGalleryImages = [...defaultRoomGalleryImages, ...defaultDestinationGalleryImages];

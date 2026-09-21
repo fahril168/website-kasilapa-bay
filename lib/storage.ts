@@ -9,7 +9,9 @@ export const STORAGE_KEYS = {
   GALLERY: "kasilapa_db_gallery",
   REVIEWS: "kasilapa_db_reviews",
   FACILITIES: "kasilapa_db_facilities",
+  CONTACTS: "kasilapa_db_contacts",
   SETTINGS: "kasilapa_db_settings",
+  VISITOR_STATS: "kasilapa_db_visitor_stats",
 } as const;
 
 export const DATA_SYNC_EVENT = "kasilapa_data_synced";

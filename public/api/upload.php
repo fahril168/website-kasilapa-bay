@@ -65,6 +65,7 @@ if (!file_exists($uploadDir)) {
 }
 
 // Helper function to auto-compress image to WebP using GD library
+if (!function_exists('compressAndConvertToWebP')) {
 function compressAndConvertToWebP($sourcePath, $destinationPath, $maxWidth = 1200, $quality = 78) {
     if (!function_exists('imagewebp')) {
         return false;
@@ -129,40 +130,85 @@ function compressAndConvertToWebP($sourcePath, $destinationPath, $maxWidth = 120
 
     return $success;
 }
+}
 
 // Generate secure unique filename
 $timestamp = time();
 $randomHex = bin2hex(random_bytes(6));
 $webpFilename = 'upload_' . $timestamp . '_' . $randomHex . '.webp';
+$webpThumbFilename = 'upload_' . $timestamp . '_' . $randomHex . '_thumb.webp';
 $webpTargetPath = $uploadDir . $webpFilename;
+$webpThumbTargetPath = $uploadDir . $webpThumbFilename;
 
-// Attempt auto-compression to WebP
-$converted = compressAndConvertToWebP($tmpPath, $webpTargetPath, 1200, 78);
+// 1. Generate master image (1200px max width, WebP quality 78)
+$convertedMaster = compressAndConvertToWebP($tmpPath, $webpTargetPath, 1200, 78);
 
-if ($converted && file_exists($webpTargetPath)) {
+// 2. Generate thumbnail image (400px max width, WebP quality 75)
+$convertedThumb = compressAndConvertToWebP($tmpPath, $webpThumbTargetPath, 400, 75);
+
+$relativeUrl = '';
+$thumbRelativeUrl = null;
+
+if ($convertedMaster && file_exists($webpTargetPath)) {
     $relativeUrl = '/img/uploads/' . $webpFilename;
-    http_response_code(200);
-    echo json_encode([
-        "status" => "success",
-        "message" => "Foto berhasil diunggah dan di-compress otomatis ke WebP!",
-        "image_url" => $relativeUrl
-    ]);
-    exit();
-}
-
-// Fallback: If GD is not enabled on local CLI, save original file
-$fallbackFilename = 'upload_' . $timestamp . '_' . $randomHex . '.' . $ext;
-$fallbackTargetPath = $uploadDir . $fallbackFilename;
-
-if (move_uploaded_file($tmpPath, $fallbackTargetPath)) {
-    $relativeUrl = '/img/uploads/' . $fallbackFilename;
-    http_response_code(200);
-    echo json_encode([
-        "status" => "success",
-        "message" => "Foto berhasil diunggah!",
-        "image_url" => $relativeUrl
-    ]);
+    if ($convertedThumb && file_exists($webpThumbTargetPath)) {
+        $thumbRelativeUrl = '/img/uploads/' . $webpThumbFilename;
+    }
 } else {
-    http_response_code(500);
-    echo json_encode(["status" => "error", "message" => "Gagal menyimpan file foto ke folder server."]);
+    // Fallback: If GD is not enabled on server, save original file
+    $fallbackFilename = 'upload_' . $timestamp . '_' . $randomHex . '.' . $ext;
+    $fallbackTargetPath = $uploadDir . $fallbackFilename;
+
+    if (move_uploaded_file($tmpPath, $fallbackTargetPath)) {
+        $relativeUrl = '/img/uploads/' . $fallbackFilename;
+        $thumbRelativeUrl = $relativeUrl;
+    } else {
+        http_response_code(500);
+        echo json_encode(["status" => "error", "message" => "Gagal menyimpan file foto ke folder server."]);
+        exit();
+    }
 }
+
+// 3. Insert record into central 'images' table
+$pdo = getDbConnection();
+$category = !empty($_POST['category']) ? trim($_POST['category']) : 'property';
+$altTextId = !empty($_POST['alt_text_id']) ? trim($_POST['alt_text_id']) : pathinfo($origName, PATHINFO_FILENAME);
+$altTextEn = !empty($_POST['alt_text_en']) ? trim($_POST['alt_text_en']) : $altTextId;
+
+$insStmt = $pdo->prepare("
+    INSERT INTO images (filename, url, thumbnail_url, alt_text_id, alt_text_en, source, category, is_active)
+    VALUES (:filename, :url, :thumbnail_url, :alt_text_id, :alt_text_en, 'upload', :category, 1)
+");
+$insStmt->execute([
+    'filename' => $origName,
+    'url' => $relativeUrl,
+    'thumbnail_url' => $thumbRelativeUrl,
+    'alt_text_id' => $altTextId,
+    'alt_text_en' => $altTextEn,
+    'category' => $category,
+]);
+$imageId = (int)$pdo->lastInsertId();
+
+// 4. Optionally attach to room or destination if IDs provided in POST
+if (!empty($_POST['room_id'])) {
+    $roomId = (int)$_POST['room_id'];
+    $isCover = !empty($_POST['is_cover']) ? 1 : 0;
+    $sortOrder = isset($_POST['sort_order']) ? (int)$_POST['sort_order'] : 0;
+    attachImageToRoom($roomId, $imageId, $isCover, $sortOrder);
+} elseif (!empty($_POST['destination_id'])) {
+    $destId = (int)$_POST['destination_id'];
+    $isCover = !empty($_POST['is_cover']) ? 1 : 0;
+    $sortOrder = isset($_POST['sort_order']) ? (int)$_POST['sort_order'] : 0;
+    attachImageToDestination($destId, $imageId, $isCover, $sortOrder);
+}
+
+http_response_code(200);
+echo json_encode([
+    "status" => "success",
+    "message" => "Foto berhasil diunggah dan disimpan ke Media Library!",
+    "image_id" => $imageId,
+    "image_url" => $relativeUrl,
+    "thumbnail_url" => $thumbRelativeUrl,
+    "category" => $category
+]);
+

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Users } from "lucide-react";
+import { ArrowRight, Users, Camera } from "lucide-react";
 import type { Locale, Dictionary } from "@/lib/i18n";
 import { formatPrice, getApiUrl } from "@/lib/utils";
 import { STORAGE_KEYS, DATA_SYNC_EVENT, getStoredData, setStoredData } from "@/lib/storage";
@@ -13,7 +13,7 @@ type Props = {
   lang: Locale;
 };
 
-const defaultRoomImages = ["/img/rooms/1.webp", "/img/rooms/2.webp"];
+const defaultRoomImages = ["/img/room.webp"];
 
 export default function FeaturedRooms({ dict, lang }: Props) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -54,16 +54,23 @@ export default function FeaturedRooms({ dict, lang }: Props) {
   }, []);
 
   const roomsToDisplay = dynamicRooms.length > 0
-    ? dynamicRooms.map((r, i) => ({
-        name: lang === "en" ? r.title_en : r.title_id,
-        description: lang === "en" ? r.description_en : r.description_id,
-        capacity: r.capacity,
-        price: Number(r.price_per_night),
-        image: r.image_url || defaultRoomImages[i % defaultRoomImages.length]
-      }))
+    ? dynamicRooms.map((r, i) => {
+        const imageList = Array.isArray(r.images) && r.images.length > 0
+          ? r.images.map((img: any) => typeof img === "string" ? img : img.url).filter(Boolean)
+          : [r.image_url || defaultRoomImages[i % defaultRoomImages.length]];
+        return {
+          name: lang === "en" ? r.title_en : r.title_id,
+          description: lang === "en" ? r.description_en : r.description_id,
+          capacity: r.capacity,
+          price: Number(r.price_per_night),
+          image: imageList[0] || r.image_url || defaultRoomImages[i % defaultRoomImages.length],
+          images: imageList,
+        };
+      })
     : dict.accommodation.rooms.slice(0, 2).map((r, i) => ({
         ...r,
-        image: defaultRoomImages[i % defaultRoomImages.length]
+        image: defaultRoomImages[i % defaultRoomImages.length],
+        images: [defaultRoomImages[i % defaultRoomImages.length]],
       }));
 
   return (
@@ -114,6 +121,14 @@ export default function FeaturedRooms({ dict, lang }: Props) {
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
                 style={{ backgroundImage: `url('${room.image}')` }}
               />
+
+              {/* Photo count badge */}
+              {room.images && room.images.length > 1 && (
+                <div className="absolute top-4 right-4 z-20 flex items-center gap-1.5 bg-black/60 backdrop-blur-md text-white text-xs font-semibold px-2.5 py-1 rounded-full border border-white/20 shadow-md">
+                  <Camera size={13} className="text-gold" />
+                  <span>{room.images.length} Foto</span>
+                </div>
+              )}
 
               {/* Gradient overlay */}
               <div

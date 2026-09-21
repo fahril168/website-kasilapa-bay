@@ -18,7 +18,7 @@ export default function CtaBanner({ dict }: Props) {
       {/* Background image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-fixed"
-        style={{ backgroundImage: "url('/img/rooms/2.webp')" }}
+        style={{ backgroundImage: "url('/img/room.webp')" }}
       />
 
       {/* Warm overlay */}

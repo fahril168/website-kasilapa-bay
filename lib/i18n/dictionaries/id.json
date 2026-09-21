@@ -1,7 +1,27 @@
 {
   "meta": {
     "title": "Kasilapa Bay — Penginapan Tepi Pantai di Tomia, Wakatobi",
-    "description": "Penginapan tenang di tepi pantai Pulau Tomia, Wakatobi. Nikmati keindahan bawah laut, pantai pasir putih, dan keramahan lokal."
+    "description": "Penginapan tenang di tepi pantai Pulau Tomia, Wakatobi. Nikmati keindahan bawah laut, pantai pasir putih, dan keramahan lokal.",
+    "accommodation": {
+      "title": "Kamar & Akomodasi Nyaman di Tomia | Kasilapa Bay",
+      "description": "Pilihan kamar Standard dan Deluxe dengan kenyamanan terbaik, pemandangan laut biru Pulau Tomia, fasilitas lengkap, dan harga terjangkau."
+    },
+    "destinations": {
+      "title": "Destinasi Wisata & Spot Diving Terbaik Tomia | Kasilapa Bay",
+      "description": "Eksplorasi keindahan Pulau Tomia, Wakatobi: Puncak Kahianga, Pantai Huntete, Pulau Lentea, Benteng Patua, dan spot diving kelas dunia."
+    },
+    "gallery": {
+      "title": "Galeri Foto Penginapan & Keindahan Tomia | Kasilapa Bay",
+      "description": "Koleksi foto kamar penginapan Kasilapa Bay, teras tepi pantai, pemandangan laut Tomia, dan pesona bawah air Wakatobi."
+    },
+    "reviews": {
+      "title": "Ulasan & Pengalaman Menginap Tamu | Kasilapa Bay",
+      "description": "Baca testimoni dan cerita langsung dari wisatawan serta penyelam yang menikmati ketenangan dan keramahan di Kasilapa Bay, Tomia."
+    },
+    "contact": {
+      "title": "Kontak & Reservasi WhatsApp | Kasilapa Bay Wakatobi",
+      "description": "Hubungi kami langsung via WhatsApp untuk ketersediaan kamar, reservasi menginap, info rute penyeberangan ke Pulau Tomia, dan panduan wisata."
+    }
   },
   "nav": {
     "home": "Beranda",
@@ -185,7 +205,10 @@
     "subtitle": "Siap merencanakan liburan Anda ke Kasilapa Bay? Hubungi kami langsung.",
     "whatsapp": "Chat via WhatsApp",
     "whatsappMessage": "Halo, saya tertarik untuk menginap di Kasilapa Bay. Bisa tolong informasikan ketersediaan kamar?",
-    "phone": "Telepon",
+    "phone": "Telepon / WhatsApp",
+    "phonePrimary": "Nomor Utama",
+    "phoneSecondary": "Nomor Kedua",
+    "instagram": "Instagram",
     "email": "Email",
     "address": "Alamat",
     "addressValue": "Desa Kasilapa, Pulau Tomia, Kabupaten Wakatobi, Sulawesi Tenggara, Indonesia",

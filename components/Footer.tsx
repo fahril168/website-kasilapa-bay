@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { MapPin, Phone, Mail } from "lucide-react";
 import type { Locale, Dictionary } from "@/lib/i18n";
-import { useDynamicSettings } from "@/lib/hooks/useDynamicSettings";
+import { useDynamicContacts } from "@/lib/hooks/useDynamicSettings";
+import { formatPhoneNumber } from "@/lib/utils";
 
 type FooterProps = {
   lang: Locale;
@@ -20,13 +21,26 @@ const navKeys = [
 ] as const;
 
 export default function Footer({ lang, dict }: FooterProps) {
-  const { whatsappNumber, email, address, instagramUrl, facebookUrl, tiktokUrl } = useDynamicSettings();
+  const { 
+    phonePrimary, 
+    phoneSecondary, 
+    email, 
+    address, 
+    instagramUrl, 
+    instagramActive,
+    facebookUrl, 
+    facebookActive,
+    tiktokUrl,
+    tiktokActive 
+  } = useDynamicContacts();
   const year = new Date().getFullYear();
+
+  const hasSocials = instagramActive || facebookActive || tiktokActive;
 
   return (
     <footer className="bg-dark text-white/80">
       <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8 py-14 sm:py-18 lg:py-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+        <div className={`grid grid-cols-1 md:grid-cols-2 ${hasSocials ? "lg:grid-cols-4" : "lg:grid-cols-3"} gap-12 lg:gap-8`}>
           {/* Brand */}
           <div className="lg:col-span-1">
             <p
@@ -65,14 +79,25 @@ export default function Footer({ lang, dict }: FooterProps) {
             </p>
             <div className="flex flex-col gap-4">
               <a
-                href={`https://wa.me/${whatsappNumber}`}
+                href={`https://wa.me/${phonePrimary}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-start gap-3 text-sm text-white/50 hover:text-gold font-medium transition-colors duration-200"
               >
                 <Phone size={16} className="mt-0.5 shrink-0 text-gold/70" />
-                <span>+{whatsappNumber}</span>
+                <span>{formatPhoneNumber(phonePrimary)}</span>
               </a>
+              {phoneSecondary ? (
+                <a
+                  href={`https://wa.me/${phoneSecondary}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-3 text-sm text-white/50 hover:text-gold font-medium transition-colors duration-200"
+                >
+                  <Phone size={16} className="mt-0.5 shrink-0 text-gold/70" />
+                  <span>{formatPhoneNumber(phoneSecondary)}</span>
+                </a>
+              ) : null}
               <a
                 href={`mailto:${email}`}
                 className="flex items-start gap-3 text-sm text-white/50 hover:text-gold font-medium transition-colors duration-200"
@@ -88,37 +113,45 @@ export default function Footer({ lang, dict }: FooterProps) {
           </div>
 
           {/* Social Links */}
-          <div>
-            <p className="text-xs font-bold tracking-[0.15em] uppercase text-gold mb-5">
-              {dict.footer.followUs}
-            </p>
-            <div className="flex flex-col gap-3">
-              <a
-                href={instagramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-white/50 hover:text-gold font-medium transition-colors duration-200"
-              >
-                Instagram
-              </a>
-              <a
-                href={facebookUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-white/50 hover:text-gold font-medium transition-colors duration-200"
-              >
-                Facebook
-              </a>
-              <a
-                href={tiktokUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-white/50 hover:text-gold font-medium transition-colors duration-200"
-              >
-                TikTok
-              </a>
+          {hasSocials && (
+            <div>
+              <p className="text-xs font-bold tracking-[0.15em] uppercase text-gold mb-5">
+                {dict.footer.followUs}
+              </p>
+              <div className="flex flex-col gap-3">
+                {instagramActive && instagramUrl ? (
+                  <a
+                    href={instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-white/50 hover:text-gold font-medium transition-colors duration-200"
+                  >
+                    Instagram
+                  </a>
+                ) : null}
+                {facebookActive && facebookUrl ? (
+                  <a
+                    href={facebookUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-white/50 hover:text-gold font-medium transition-colors duration-200"
+                  >
+                    Facebook
+                  </a>
+                ) : null}
+                {tiktokActive && tiktokUrl ? (
+                  <a
+                    href={tiktokUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-white/50 hover:text-gold font-medium transition-colors duration-200"
+                  >
+                    TikTok
+                  </a>
+                ) : null}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Bottom bar */}

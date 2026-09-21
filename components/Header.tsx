@@ -66,16 +66,15 @@ export default function Header({ lang, dict }: HeaderProps) {
           {/* Logo */}
           <Link
             href={`/${lang}`}
-            className="flex items-center gap-2 group"
+            className="flex items-center group py-1"
           >
-            <span
-              className={`text-lg font-bold tracking-[0.15em] uppercase transition-colors duration-300 ${
-                isTransparent ? "text-white" : "text-foreground"
+            <img
+              src={isTransparent ? "/img/logo-putih.png" : "/img/logo.png"}
+              alt="Kasilapa Bay"
+              className={`w-auto object-contain transition-all duration-300 ${
+                scrolled ? "h-9 lg:h-10" : "h-11 lg:h-13"
               }`}
-              style={{ fontFamily: "var(--font-serif)" }}
-            >
-              Kasilapa Bay
-            </span>
+            />
           </Link>
 
           {/* Desktop Nav */}

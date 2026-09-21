@@ -5,18 +5,17 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { useDynamicSettings } from "@/lib/hooks/useDynamicSettings";
+import { STORAGE_KEYS, getStoredData } from "@/lib/storage";
+import { getApiUrl } from "@/lib/utils";
 
 type Props = {
   dict: Dictionary;
   lang?: Locale;
 };
 
-const roomImages = [
-  { src: "/img/rooms/1.webp", alt: "Kasilapa Bay Room 1" },
-  { src: "/img/rooms/9.webp", alt: "Deluxe Room Interior" },
-  { src: "/img/rooms/21.webp", alt: "Standart Room Interior" },
-  { src: "/img/rooms/24.webp", alt: "Homestay View" },
-  { src: "/img/rooms/34.webp", alt: "Relaxing Seating Area" },
+const defaultAboutImages = [
+  { src: "/img/room.webp", alt: "Kasilapa Bay Resort" },
+  { src: "/img/hero.webp", alt: "Kasilapa Bay View" },
 ];
 
 const stats = [
@@ -27,6 +26,7 @@ const stats = [
 
 export default function AboutSection({ dict, lang = "id" }: Props) {
   const { settings } = useDynamicSettings();
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -41,6 +41,45 @@ export default function AboutSection({ dict, lang = "id" }: Props) {
     ? (settings?.about_description_en || dict.about.description)
     : (settings?.about_description_id || dict.about.description);
 
+  // Fallback: If no explicit about_images in settings, fetch active gallery property photos
+  useEffect(() => {
+    if (settings?.about_images && Array.isArray(settings.about_images) && settings.about_images.length > 0) {
+      return;
+    }
+    const cachedGallery = getStoredData<any[]>(STORAGE_KEYS.GALLERY, []);
+    if (Array.isArray(cachedGallery) && cachedGallery.length > 0) {
+      const activeUrls = cachedGallery
+        .filter((g) => g.is_active !== 0 && g.is_active !== false && g.image_url)
+        .map((g) => g.image_url);
+      if (activeUrls.length > 0) {
+        setGalleryImages(activeUrls);
+      }
+    } else {
+      fetch(getApiUrl("/api/galeri.php"))
+        .then((res) => (res.ok ? res.json() : null))
+        .then((json) => {
+          if (json?.status === "success" && Array.isArray(json.data) && json.data.length > 0) {
+            const activeUrls = json.data
+              .filter((g: any) => g.is_active !== 0 && g.is_active !== false && (g.url || g.image_url))
+              .map((g: any) => g.url || g.image_url);
+            if (activeUrls.length > 0) {
+              setGalleryImages(activeUrls);
+            }
+          }
+        })
+        .catch(() => {});
+    }
+  }, [settings?.about_images]);
+
+  // Determine active images to display in slider
+  const chosenImages = (settings?.about_images && Array.isArray(settings.about_images) && settings.about_images.length > 0)
+    ? settings.about_images.map((url, i) => ({ src: url, alt: `Kasilapa Bay ${i + 1}` }))
+    : galleryImages.length > 0
+      ? galleryImages.map((url, i) => ({ src: url, alt: `Kasilapa Bay ${i + 1}` }))
+      : defaultAboutImages;
+
+  const totalImages = chosenImages.length;
+
   useEffect(() => {
     const updateWidth = () => {
       if (containerRef.current) {
@@ -54,13 +93,20 @@ export default function AboutSection({ dict, lang = "id" }: Props) {
     return () => window.removeEventListener("resize", updateWidth);
   }, []);
 
+  // Reset currentIndex if totalImages changes
   useEffect(() => {
-    if (isHovered) return;
+    if (currentIndex >= totalImages) {
+      setCurrentIndex(0);
+    }
+  }, [totalImages, currentIndex]);
+
+  useEffect(() => {
+    if (isHovered || totalImages <= 1) return;
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % roomImages.length);
+      setCurrentIndex((prev) => (prev + 1) % totalImages);
     }, 4500);
     return () => clearInterval(timer);
-  }, [isHovered]);
+  }, [isHovered, totalImages]);
 
   return (
     <section className="section-padding bg-surface relative overflow-hidden grain-overlay">
@@ -119,7 +165,7 @@ export default function AboutSection({ dict, lang = "id" }: Props) {
                 transition={{ duration: 0.6, ease: [0.32, 0.72, 0, 1] }}
                 className="flex gap-4 sm:gap-5 w-full"
               >
-                {roomImages.map((img, index) => (
+                {chosenImages.map((img, index) => (
                   <div
                     key={index}
                     className="w-[83%] flex-shrink-0 relative aspect-[4/3] rounded-lg overflow-hidden bg-dark shadow-xl"
@@ -135,45 +181,47 @@ export default function AboutSection({ dict, lang = "id" }: Props) {
               </motion.div>
             </div>
 
-            {/* Navigation Controls */}
-            <div className="absolute bottom-4 left-0 w-[83%] flex items-center justify-between px-4 z-30 pointer-events-auto">
-              <button
-                onClick={() =>
-                  setCurrentIndex(
-                    (prev) => (prev - 1 + roomImages.length) % roomImages.length
-                  )
-                }
-                className="p-2 rounded-full bg-[#1a1714]/60 hover:bg-gold text-white backdrop-blur-md transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg"
-                aria-label="Previous image"
-              >
-                <ChevronLeft size={18} />
-              </button>
+            {/* Navigation Controls (Only shown if more than 1 image) */}
+            {totalImages > 1 && (
+              <div className="absolute bottom-4 left-0 w-[83%] flex items-center justify-between px-4 z-30 pointer-events-auto">
+                <button
+                  onClick={() =>
+                    setCurrentIndex(
+                      (prev) => (prev - 1 + totalImages) % totalImages
+                    )
+                  }
+                  className="p-2 rounded-full bg-[#1a1714]/60 hover:bg-gold text-white backdrop-blur-md transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg cursor-pointer"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft size={18} />
+                </button>
 
-              <div className="flex items-center gap-1.5 bg-[#1a1714]/50 px-3.5 py-1.5 rounded-full backdrop-blur-md border border-white/10">
-                {roomImages.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrentIndex(i)}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      currentIndex === i
-                        ? "w-6 bg-gold"
-                        : "w-2 bg-white/50 hover:bg-white/80"
-                    }`}
-                    aria-label={`Go to slide ${i + 1}`}
-                  />
-                ))}
+                <div className="flex items-center gap-1.5 bg-[#1a1714]/50 px-3.5 py-1.5 rounded-full backdrop-blur-md border border-white/10">
+                  {chosenImages.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentIndex(i)}
+                      className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                        currentIndex === i
+                          ? "w-6 bg-gold"
+                          : "w-2 bg-white/50 hover:bg-white/80"
+                      }`}
+                      aria-label={`Go to slide ${i + 1}`}
+                    />
+                  ))}
+                </div>
+
+                <button
+                  onClick={() =>
+                    setCurrentIndex((prev) => (prev + 1) % totalImages)
+                  }
+                  className="p-2 rounded-full bg-[#1a1714]/60 hover:bg-gold text-white backdrop-blur-md transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg cursor-pointer"
+                  aria-label="Next image"
+                >
+                  <ChevronRight size={18} />
+                </button>
               </div>
-
-              <button
-                onClick={() =>
-                  setCurrentIndex((prev) => (prev + 1) % roomImages.length)
-                }
-                className="p-2 rounded-full bg-[#1a1714]/60 hover:bg-gold text-white backdrop-blur-md transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg"
-                aria-label="Next image"
-              >
-                <ChevronRight size={18} />
-              </button>
-            </div>
+            )}
           </motion.div>
         </div>
       </div>

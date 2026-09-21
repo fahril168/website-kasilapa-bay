@@ -1,7 +1,27 @@
 {
   "meta": {
     "title": "Kasilapa Bay — Beachfront Homestay in Tomia, Wakatobi",
-    "description": "A peaceful beachfront homestay on Tomia Island, Wakatobi. Discover pristine reefs, white sand beaches, and genuine local hospitality."
+    "description": "A peaceful beachfront homestay on Tomia Island, Wakatobi. Discover pristine reefs, white sand beaches, and genuine local hospitality.",
+    "accommodation": {
+      "title": "Comfortable Rooms & Accommodation in Tomia | Kasilapa Bay",
+      "description": "Explore Standard and Deluxe rooms offering restful comfort, ocean views of Tomia Island, full amenities, and affordable beachfront rates."
+    },
+    "destinations": {
+      "title": "Top Tourist Attractions & Diving Sites in Tomia | Kasilapa Bay",
+      "description": "Discover the best spots on Tomia Island, Wakatobi: Kahianga Peak, Huntete Beach, Lintea Island, Patua Fort, and world-class diving reefs."
+    },
+    "gallery": {
+      "title": "Photo Gallery & Island Highlights | Kasilapa Bay",
+      "description": "Browse photos of Kasilapa Bay resort rooms, beachfront terraces, crystal-clear waters of Tomia, and rich underwater marine life in Wakatobi."
+    },
+    "reviews": {
+      "title": "Guest Reviews & Experiences | Kasilapa Bay",
+      "description": "Read genuine feedback and stories from travelers, backpackers, and divers who stayed at Kasilapa Bay beachfront homestay in Tomia."
+    },
+    "contact": {
+      "title": "Contact & WhatsApp Booking | Kasilapa Bay Wakatobi",
+      "description": "Contact us directly via WhatsApp for room reservations, availability, boat transfer schedules to Tomia Island, and travel guidance."
+    }
   },
   "nav": {
     "home": "Home",
@@ -185,7 +205,10 @@
     "subtitle": "Ready to plan your getaway to Kasilapa Bay? Reach out to us directly.",
     "whatsapp": "Chat via WhatsApp",
     "whatsappMessage": "Hello, I'm interested in staying at Kasilapa Bay. Could you let me know about room availability?",
-    "phone": "Phone",
+    "phone": "Phone / WhatsApp",
+    "phonePrimary": "Primary Number",
+    "phoneSecondary": "Secondary Number",
+    "instagram": "Instagram",
     "email": "Email",
     "address": "Address",
     "addressValue": "Kasilapa Village, Tomia Island, Wakatobi Regency, Southeast Sulawesi, Indonesia",

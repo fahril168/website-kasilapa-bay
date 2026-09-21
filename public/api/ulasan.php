@@ -38,16 +38,33 @@ switch ($method) {
         verifyAdminToken();
         $input = json_decode(file_get_contents('php://input'), true);
 
+        if (empty($input['id'])) {
+            http_response_code(400);
+            echo json_encode(["status" => "error", "message" => "ID ulasan wajib disertakan."]);
+            exit();
+        }
+
+        // Fetch existing review to preserve unspecified fields
+        $existStmt = $pdo->prepare("SELECT * FROM reviews WHERE id = :id LIMIT 1");
+        $existStmt->execute(['id' => (int)$input['id']]);
+        $existing = $existStmt->fetch();
+
+        if (!$existing) {
+            http_response_code(404);
+            echo json_encode(["status" => "error", "message" => "Ulasan tidak ditemukan."]);
+            exit();
+        }
+
         $sql = "UPDATE reviews SET guest_name = :guest_name, origin = :origin, rating = :rating, comment_id = :comment_id, comment_en = :comment_en, is_visible = :is_visible WHERE id = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
-            'id' => $input['id'],
-            'guest_name' => $input['guest_name'],
-            'origin' => $input['origin'],
-            'rating' => $input['rating'],
-            'comment_id' => $input['comment_id'],
-            'comment_en' => $input['comment_en'],
-            'is_visible' => $input['is_visible']
+            'id' => (int)$input['id'],
+            'guest_name' => $input['guest_name'] ?? $existing['guest_name'],
+            'origin' => $input['origin'] ?? $existing['origin'],
+            'rating' => isset($input['rating']) ? (int)$input['rating'] : (int)$existing['rating'],
+            'comment_id' => $input['comment_id'] ?? $existing['comment_id'],
+            'comment_en' => $input['comment_en'] ?? $existing['comment_en'],
+            'is_visible' => isset($input['is_visible']) ? (int)$input['is_visible'] : (int)$existing['is_visible']
         ]);
 
         echo json_encode(["status" => "success", "message" => "Ulasan berhasil diperbarui."]);

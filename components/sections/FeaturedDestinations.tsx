@@ -10,12 +10,6 @@ type Props = {
   lang: Locale;
 };
 
-const destinationImages = [
-  "/img/destinations/kahianga.webp",
-  "/img/destinations/huntete.webp",
-  "/img/destinations/roma.webp",
-];
-
 export default function FeaturedDestinations({ dict, lang }: Props) {
   const places = dict.destination.places.slice(0, 5);
 

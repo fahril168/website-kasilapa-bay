@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://kasilapabay.vercel.app";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://kasilapahotel.com";
   const routes = ["", "/akomodasi", "/destinasi", "/galeri", "/ulasan", "/kontak"];
   const locales = ["id", "en"];
 

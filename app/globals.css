@@ -56,6 +56,23 @@ h4 {
   line-height: 1.15;
 }
 
+/* ── AdminLTE Typography Reset ─────────────────────── */
+.admin-lte-body,
+.admin-lte-body h1,
+.admin-lte-body h2,
+.admin-lte-body h3,
+.admin-lte-body h4,
+.admin-lte-body h5,
+.admin-lte-body h6,
+.admin-lte-body p,
+.admin-lte-body span,
+.admin-lte-body table,
+.admin-lte-body button,
+.admin-lte-body input {
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  letter-spacing: normal;
+}
+
 /* ── Utilities ──────────────────────────────────────── */
 .text-balance {
   text-wrap: balance;
