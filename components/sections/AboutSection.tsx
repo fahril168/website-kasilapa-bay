@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { useDynamicSettings } from "@/lib/hooks/useDynamicSettings";
-import { STORAGE_KEYS, getStoredData } from "@/lib/storage";
+import { STORAGE_KEYS, DATA_SYNC_EVENT, getStoredData } from "@/lib/storage";
 import { getApiUrl } from "@/lib/utils";
 
 type Props = {
@@ -18,12 +18,6 @@ const defaultAboutImages = [
   { src: "/img/hero.webp", alt: "Kasilapa Bay View" },
 ];
 
-const stats = [
-  { value: "2", labelId: "Tipe Kamar", labelEn: "Room Types" },
-  { value: "6", labelId: "Destinasi", labelEn: "Destinations" },
-  { value: "4.9", labelId: "Rating Tamu", labelEn: "Guest Rating" },
-];
-
 export default function AboutSection({ dict, lang = "id" }: Props) {
   const { settings } = useDynamicSettings();
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
@@ -31,6 +25,38 @@ export default function AboutSection({ dict, lang = "id" }: Props) {
   const [isHovered, setIsHovered] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [stepWidth, setStepWidth] = useState(300);
+
+  // Dynamic stats calculated from real database storage
+  const [statsData, setStatsData] = useState({
+    rooms: 2,
+    destinations: 10,
+    rating: "4.9",
+  });
+
+  useEffect(() => {
+    const updateStats = () => {
+      const rooms = getStoredData<any[]>(STORAGE_KEYS.ROOMS, []);
+      const dests = getStoredData<any[]>(STORAGE_KEYS.DESTINATIONS, []);
+      const revs = getStoredData<any[]>(STORAGE_KEYS.REVIEWS, []);
+
+      const roomCount = rooms.length > 0 ? rooms.length : 2;
+      const destCount = dests.length > 0 ? dests.length : 10;
+      let ratingStr = "4.9";
+      if (revs.length > 0) {
+        const sum = revs.reduce((acc, r) => acc + Number(r.rating || 5), 0);
+        ratingStr = (sum / revs.length).toFixed(1);
+      }
+      setStatsData({ rooms: roomCount, destinations: destCount, rating: ratingStr });
+    };
+
+    updateStats();
+    window.addEventListener(DATA_SYNC_EVENT, updateStats);
+    window.addEventListener("storage", updateStats);
+    return () => {
+      window.removeEventListener(DATA_SYNC_EVENT, updateStats);
+      window.removeEventListener("storage", updateStats);
+    };
+  }, []);
 
   // Dynamic Headline and Description from Hostinger MySQL API
   const dynamicHeadline = lang === "en" 
@@ -133,9 +159,13 @@ export default function AboutSection({ dict, lang = "id" }: Props) {
               {dynamicDescription}
             </p>
 
-            {/* Stats row */}
+            {/* Stats row (Dynamically synced from database) */}
             <div className="flex items-center gap-8">
-              {stats.map((stat, i) => (
+              {[
+                { value: String(statsData.rooms), labelId: "Tipe Kamar", labelEn: "Room Types" },
+                { value: String(statsData.destinations), labelId: "Destinasi", labelEn: "Destinations" },
+                { value: statsData.rating, labelId: "Rating Tamu", labelEn: "Guest Rating" },
+              ].map((stat, i) => (
                 <div key={i} className="text-center">
                   <p className="text-2xl sm:text-3xl font-bold text-foreground font-serif">
                     {stat.value}
@@ -171,8 +201,11 @@ export default function AboutSection({ dict, lang = "id" }: Props) {
                     className="w-[83%] flex-shrink-0 relative aspect-[4/3] rounded-lg overflow-hidden bg-dark shadow-xl"
                   >
                     <img
-                      src={img.src}
+                      src={img.src || "/img/hero.webp"}
                       alt={img.alt}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "/img/hero.webp";
+                      }}
                       className="w-full h-full object-cover pointer-events-none"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#1a1714]/50 via-transparent to-transparent pointer-events-none z-10" />

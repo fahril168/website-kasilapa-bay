@@ -53,8 +53,7 @@ export default function FeaturedRooms({ dict, lang }: Props) {
     };
   }, []);
 
-  const roomsToDisplay = dynamicRooms.length > 0
-    ? dynamicRooms.map((r, i) => {
+  const roomsToDisplay = dynamicRooms.map((r, i) => {
         const imageList = Array.isArray(r.images) && r.images.length > 0
           ? r.images.map((img: any) => typeof img === "string" ? img : img.url).filter(Boolean)
           : [r.image_url || defaultRoomImages[i % defaultRoomImages.length]];
@@ -66,12 +65,9 @@ export default function FeaturedRooms({ dict, lang }: Props) {
           image: imageList[0] || r.image_url || defaultRoomImages[i % defaultRoomImages.length],
           images: imageList,
         };
-      })
-    : dict.accommodation.rooms.slice(0, 2).map((r, i) => ({
-        ...r,
-        image: defaultRoomImages[i % defaultRoomImages.length],
-        images: [defaultRoomImages[i % defaultRoomImages.length]],
-      }));
+  });
+
+  if (roomsToDisplay.length === 0) return null;
 
   return (
     <section className="section-padding bg-dark-warm relative grain-overlay">
@@ -116,10 +112,14 @@ export default function FeaturedRooms({ dict, lang }: Props) {
               onMouseEnter={() => setHoveredIndex(i)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
-              {/* Background image */}
-              <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
-                style={{ backgroundImage: `url('${room.image}')` }}
+              {/* Background image with fallback */}
+              <img
+                src={room.image || "/img/placeholder.svg"}
+                alt={room.name}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = "/img/placeholder.svg";
+                }}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
 
               {/* Photo count badge */}

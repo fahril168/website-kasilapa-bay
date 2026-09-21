@@ -1,17 +1,87 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, MapPin } from "lucide-react";
 import type { Locale, Dictionary } from "@/lib/i18n";
+import { getApiUrl } from "@/lib/utils";
+import { STORAGE_KEYS, DATA_SYNC_EVENT, getStoredData, setStoredData } from "@/lib/storage";
 
 type Props = {
   dict: Dictionary;
   lang: Locale;
 };
 
+function formatDistance(distStr: string, isEn: boolean): string {
+  if (!distStr || !isEn) return distStr || "";
+  return distStr
+    .replace(/menit berkendara/gi, "min drive")
+    .replace(/menit perahu/gi, "min by boat")
+    .replace(/menit jalan kaki/gi, "min walk")
+    .replace(/menit/gi, "mins");
+}
+
+function formatCategory(cat: string, isEn: boolean): string {
+  if (!cat || !isEn) return cat || "Nature";
+  const map: Record<string, string> = {
+    "Pemandangan Alam": "Scenic Views",
+    "Alam": "Nature",
+    "Sejarah & Budaya": "History & Culture",
+    "Pantai": "Beach",
+    "Diving": "Diving",
+    "Kuliner": "Culinary",
+  };
+  return map[cat] || cat;
+}
+
 export default function FeaturedDestinations({ dict, lang }: Props) {
-  const places = dict.destination.places.slice(0, 5);
+  const [dynamicPlaces, setDynamicPlaces] = useState<any[]>([]);
+
+  useEffect(() => {
+    // 1. Initial load from local persistent storage
+    const stored = getStoredData<any[]>(STORAGE_KEYS.DESTINATIONS, []);
+    if (Array.isArray(stored) && stored.length > 0) {
+      setDynamicPlaces(stored.slice(0, 5));
+    }
+
+    // 2. Real-time sync listener
+    const handleSync = () => {
+      const updated = getStoredData<any[]>(STORAGE_KEYS.DESTINATIONS, []);
+      if (Array.isArray(updated) && updated.length > 0) {
+        setDynamicPlaces(updated.slice(0, 5));
+      }
+    };
+    window.addEventListener(DATA_SYNC_EVENT, handleSync);
+    window.addEventListener("storage", handleSync);
+
+    // 3. Background fetch from API
+    fetch(getApiUrl("/api/destinasi.php"))
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json?.status === "success" && Array.isArray(json.data) && json.data.length > 0) {
+          setDynamicPlaces(json.data.slice(0, 5));
+          setStoredData(STORAGE_KEYS.DESTINATIONS, json.data);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      window.removeEventListener(DATA_SYNC_EVENT, handleSync);
+      window.removeEventListener("storage", handleSync);
+    };
+  }, []);
+
+  const places = dynamicPlaces.map((d) => ({
+        name: (lang === "en" ? d.name_en : d.name_id) || d.name_id || d.name_en || "Destinasi Wisata",
+        category: formatCategory(d.category, lang === "en"),
+        description: (lang === "en" ? d.description_en : d.description_id) || d.description_id || d.description_en || "",
+        distance: formatDistance(d.distance, lang === "en"),
+        image: d.image_url || "/img/placeholder.svg",
+        url: d.info_url || "#"
+  }));
+
+  if (places.length === 0) return null;
 
   return (
     <section className="section-padding relative overflow-hidden">
@@ -56,12 +126,14 @@ export default function FeaturedDestinations({ dict, lang }: Props) {
                     : "aspect-[4/3]"
                 }`}
             >
-              {/* Image */}
-              <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
-                style={{
-                  backgroundImage: `url('${place.image}')`,
+              {/* Image with fallback */}
+              <img
+                src={place.image || "/img/placeholder.svg"}
+                alt={place.name}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = "/img/placeholder.svg";
                 }}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
 
               {/* Gradient overlay */}

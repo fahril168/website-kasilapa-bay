@@ -2096,7 +2096,7 @@ export default function AdminDashboardContent() {
                     <tr key={r.id} className="border-b border-slate-100 hover:bg-blue-50/30 transition-colors">
                       <td className="px-4 py-3">
                         <div className="relative inline-block">
-                          <img src={r.image_url || "/img/room.webp"} alt={r.title_id} className="w-12 h-12 rounded-xl object-cover border border-slate-200 shadow-2xs" />
+                          <img src={r.image_url || "/img/placeholder.svg"} alt={r.title_id} className="w-12 h-12 rounded-xl object-cover border border-slate-200 shadow-2xs" />
                           {r.images && r.images.length > 0 && (
                             <span className="absolute -bottom-1 -right-1 bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-full shadow-xs border border-white">
                               {r.images.length}
@@ -2151,7 +2151,13 @@ export default function AdminDashboardContent() {
                     <tr key={d.id} className="border-b border-slate-100 hover:bg-blue-50/30 transition-colors">
                       <td className="px-4 py-3">
                         <div className="relative inline-block">
-                          <img src={d.image_url || "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Puncak-Kahianga-by-Amal-Hermawan-428x242.jpg"} alt={d.name_id} className="w-12 h-12 rounded-xl object-cover border border-slate-200 shadow-2xs" />
+                          {d.image_url ? (
+                            <img src={d.image_url} alt={d.name_id} className="w-12 h-12 rounded-xl object-cover border border-slate-200 shadow-2xs" />
+                          ) : (
+                            <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 shadow-2xs">
+                              <MapPin size={20} />
+                            </div>
+                          )}
                           {d.images && d.images.length > 0 && (
                             <span className="absolute -bottom-1 -right-1 bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-full shadow-xs border border-white">
                               {d.images.length}

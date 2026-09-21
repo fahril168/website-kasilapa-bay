@@ -111,11 +111,15 @@ function RoomCardWithSlider({
           onClick={() => onOpenLightbox(room, activeImgIdx)}
           className="relative w-full h-[280px] sm:h-[360px] lg:h-full min-h-[280px] lg:min-h-[420px] cursor-pointer overflow-hidden group/img"
         >
-          {/* Active Image Background with Smooth Transition */}
-          <div
+          {/* Active Image with Smooth Transition & Fallback */}
+          <img
             key={currentImage}
-            className="w-full h-full bg-cover bg-center transition-all duration-500 ease-out group-hover/img:scale-105"
-            style={{ backgroundImage: `url('${currentImage}')` }}
+            src={currentImage || "/img/placeholder.svg"}
+            alt={room.name}
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = "/img/placeholder.svg";
+            }}
+            className="w-full h-full object-cover transition-all duration-500 ease-out group-hover/img:scale-105"
           />
 
           {/* Subtle gradient overlay */}
@@ -360,8 +364,7 @@ export default function AccommodationContent({ dict, lang }: Props) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [lightbox]);
 
-  const roomsToDisplay: RoomItem[] = dynamicRooms.length > 0
-    ? dynamicRooms.map((r, i) => {
+  const roomsToDisplay: RoomItem[] = dynamicRooms.map((r, i) => {
         const imageList = Array.isArray(r.images) && r.images.length > 0
           ? r.images.map((img: any) => typeof img === "string" ? img : img.url).filter(Boolean)
           : [r.image_url || defaultRoomImages[i % defaultRoomImages.length]];
@@ -376,14 +379,9 @@ export default function AccommodationContent({ dict, lang }: Props) {
           image: imageList[0] || r.image_url || defaultRoomImages[i % defaultRoomImages.length],
           images: imageList,
         };
-      })
-    : dict.accommodation.rooms.map((r, i) => ({
-        id: i + 1,
-        ...r,
-        bedType: "King Bed",
-        image: defaultRoomImages[i % defaultRoomImages.length],
-        images: [defaultRoomImages[i % defaultRoomImages.length]],
-      }));
+  });
+
+  if (roomsToDisplay.length === 0) return null;
 
   const facilitiesToDisplay = dynamicFacilities.length > 0
     ? dynamicFacilities.map((f) => ({

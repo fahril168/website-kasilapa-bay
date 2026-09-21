@@ -57,107 +57,13 @@
       "electricity": "Listrik 24 Jam",
       "water": "Air Bersih"
     },
-    "rooms": [
-      {
-        "name": "Standart Room",
-        "description": "Tipe kamar ini merupakan opsi paling ekonomis, biasanya ditujukan untuk solo traveler atau dua orang yang menginginkan akomodasi standar.",
-        "capacity": 2,
-        "price": 250000
-      },
-      {
-        "name": "Deluxe Room",
-        "description": "Tipe kamar dengan ukuran ruang yang lebih lapang dan penataan yang lebih nyaman untuk istirahat maksimal selama berada di Pulau Tomia.",
-        "capacity": 2,
-        "price": 300000
-      }
-    ]
+    "rooms": []
   },
   "destination": {
     "title": "Destinasi Sekitar",
     "subtitle": "Jelajahi keajaiban alam dan budaya di sekitar Pulau Tomia.",
     "distance": "jarak",
-    "places": [
-      {
-        "name": "Puncak Kahianga",
-        "category": "Pemandangan Alam",
-        "description": "Titik tertinggi di Tomia dengan pemandangan laut biru tak berujung, bukit sabana yang hijau, dan sunset yang indah.",
-        "distance": "10 menit berkendara",
-        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Puncak-Kahianga-by-Amal-Hermawan-428x242.jpg",
-        "url": "https://www.wakatobitourism.com/item/kahianga-peak/"
-      },
-      {
-        "name": "Desa Kulati",
-        "category": "Sejarah & Budaya",
-        "description": "Desa wisata berbasis masyarakat dengan keindahan pantai tebing karang seperti Pantai Huntete yang eksotis.",
-        "distance": "20 menit berkendara",
-        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Huuntete-Beach-Kulati-by-Muis-Bhojest-min-428x242.jpg",
-        "url": "https://www.wakatobitourism.com/item/kulati-village/"
-      },
-      {
-        "name": "Pulau Lentea",
-        "category": "Pantai",
-        "description": "Pulau tetangga berpasir putih halus yang dikelilingi pohon kelapa menjulang tinggi dan air laut yang sangat jernih.",
-        "distance": "30 menit perahu",
-        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Pulau-Lentea-Tomia-49-428x242.jpg",
-        "url": "https://www.wakatobitourism.com/item/lintea-island/"
-      },
-      {
-        "name": "Roma",
-        "category": "Diving",
-        "description": "Spot menyelam paling populer dengan ribuan schooling fish yang mengitari puncak terumbu karang melingkar besar.",
-        "distance": "15 menit perahu",
-        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Roma-by-Wakatobi-Regency-428x242.jpg",
-        "url": "https://www.wakatobitourism.com/item/roma/"
-      },
-      {
-        "name": "Pulau Nda'a",
-        "category": "Pantai",
-        "description": "Pulau tak berpenghuni dengan pantai berpasir selembut tepung dan ekosistem terumbu karang yang sangat dangkal dan utuh.",
-        "distance": "40 menit perahu",
-        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Ndaa-Island-by-Guntur-2-428x242.jpg",
-        "url": "https://www.wakatobitourism.com/item/ndaa-island/"
-      },
-      {
-        "name": "Benteng Patua",
-        "category": "Sejarah & Budaya",
-        "description": "Benteng bersejarah peninggalan Kesultanan Buton di puncak bukit batu karang Tomia yang menyuguhkan lanskap spektakuler.",
-        "distance": "18 menit berkendara",
-        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Patua-Fort-by-Amal-Hermawan-428x242.jpg",
-        "url": "https://www.wakatobitourism.com/item/patua-fort/"
-      },
-      {
-        "name": "Ali Reef",
-        "category": "Diving",
-        "description": "Spot menyelam populer yang terkenal dengan kawanan besar ikan schooling fish yang berenang bebas di antara terumbu karang.",
-        "distance": "20 menit perahu",
-        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Fish-Schooling-by-DCDC-min-428x242.jpg",
-        "url": "https://www.wakatobitourism.com/item/ali-reef/"
-      },
-      {
-        "name": "Kolosuha",
-        "category": "Diving",
-        "description": "Tebing terumbu karang bawah laut yang curam di sisi barat Tomia, dipenuhi keanekaragaman biota laut.",
-        "distance": "18 menit perahu",
-        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Kolosuha-by-Wakatobi-Regency-428x242.jpg",
-        "url": "https://www.wakatobitourism.com/item/kolosuha/"
-      },
-      {
-        "name": "Mari Mabuk",
-        "category": "Diving",
-        "description": "Salah satu titik selam favorit dengan pemandangan terumbu karang warna-warni dan arus air yang bersahabat.",
-        "distance": "15 menit perahu",
-        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/05/Mari-Mabuk-by-Hendra-Tan-min-1-428x242.jpg",
-        "url": "https://www.wakatobitourism.com/item/mari-mabuk/"
-      },
-      {
-        "name": "Wreck of Kulati",
-        "category": "Diving",
-        "description": "Bangkai kapal karam bersejarah di kedalaman laut dekat Kulati yang kini bertransformasi menjadi rumah bagi terumbu karang indah.",
-        "distance": "25 menit perahu",
-        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Wreck-Kulati-by-Guntur-428x242.jpg",
-        "url": "https://www.wakatobitourism.com/item/wreck-of-kulati/"
-      }
-    ]
+    "places": []
   },
   "gallery": {
     "title": "Galeri",
@@ -173,32 +79,7 @@
   "reviews": {
     "title": "Ulasan Tamu",
     "subtitle": "Apa kata mereka yang telah menginap di Kasilapa Bay.",
-    "items": [
-      {
-        "name": "Putri Kitnas ",
-        "origin": "Depok, Indonesia",
-        "rating": 5,
-        "comment": "Rasanya seperti di rumah. Ibu dan Bapak Haji menjadikan kami seperti mengunjungi keluarga daripada menginap di hotel. Saya memiliki harapan yang rendah sebelum datang, namun tempat ini sangat cocok dalam hal kebersihan, kenyamanan, lokasi, dan makanan."
-      },
-      {
-        "name": "Lelie Liana",
-        "origin": "Bali, Indonesia",
-        "rating": 5,
-        "comment": "Hotelnya nyaman. Kamarnya luas. Lokasi hotelnya juga di tempat yang seoi dan tidak ramai jalur kendaraan. Kamar di ujung sangat luas dan menghadap laut. Udara dan angin banyak. Saya sangat suka. Masakan Ibu pemilik hotel sangat enak. Ibunya sangat baik."
-      },
-      {
-        "name": "famokossatour",
-        "origin": "-",
-        "rating": 5,
-        "comment": "Jika anda sedang merencanakan untuk berlibur atau akan berwisata di Pulau Tomia, Kasilapa Bay Hotel menjadi rekomendasi utama untuk akomodasi selama berada di sana. Selain kenyamanan serta keramahan pelayanan, Kasilapa Bay Hotel juga menawarkan pemandangan yang indah serta lokasinya yang strategis tepat di teluk Kasilapa."
-      },
-      {
-        "name": "Anne Mbouw",
-        "origin": "-",
-        "rating": 5,
-        "comment": "Langsung dijemput dari pelabuhan, kamar bersih & nyaman, serta suasana sore di halaman belakang sungguh indah. Penginapan ini seperti rumah sendiri, dengan teras santai, lokasi strategis ke pasar dan snorkeling, plus ada souvenir handycraft lokal. Tuan rumahnya sangat ramah, kami foto bersama sebelum pulang dan pasti akan kembali lagi."
-      }
-    ]
+    "items": []
   },
   "contact": {
     "title": "Hubungi Kami",

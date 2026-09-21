@@ -154,8 +154,11 @@ export default function GalleryContent({ dict, lang = "id" }: Props) {
                     className={`img-zoom relative cursor-pointer block w-full rounded-lg overflow-hidden mb-3 sm:mb-4 break-inside-avoid ${aspectClass}`}
                   >
                     <img
-                      src={img.src}
-                      alt={img.alt}
+                      src={img.src || "/img/placeholder.svg"}
+                      alt={img.alt || "Kasilapa Bay Gallery"}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "/img/placeholder.svg";
+                      }}
                       className="w-full h-full object-cover"
                       loading="lazy"
                     />
@@ -207,8 +210,11 @@ export default function GalleryContent({ dict, lang = "id" }: Props) {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              src={filtered[lightbox]?.src}
+              src={filtered[lightbox]?.src || "/img/placeholder.svg"}
               alt={filtered[lightbox]?.alt || "Kasilapa Bay Gallery Image"}
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = "/img/placeholder.svg";
+              }}
               className="max-w-full max-h-[85vh] object-contain rounded-lg"
               onClick={(e) => e.stopPropagation()}
             />

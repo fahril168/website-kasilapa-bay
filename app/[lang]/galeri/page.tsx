@@ -53,5 +53,5 @@ export default async function GaleriPage({ params }: Props) {
   const { lang } = await params;
   const dict = await getDictionary(lang as Locale);
 
-  return <GalleryContent dict={dict} />;
+  return <GalleryContent dict={dict} lang={lang as Locale} />;
 }

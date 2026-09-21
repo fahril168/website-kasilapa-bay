@@ -1,0 +1,14 @@
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Clean neutral light background -->
+  <rect width="800" height="600" fill="#F1F5F9" />
+
+  <!-- Minimalist centered image icon (Lucide style) -->
+  <g transform="translate(364, 264)" stroke="#94A3B8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Frame -->
+    <rect x="0" y="0" width="72" height="72" rx="14" fill="#E2E8F0" fill-opacity="0.5" stroke="#CBD5E1" stroke-width="3.5" />
+    <!-- Sun / Aperture -->
+    <circle cx="24" cy="24" r="7" stroke="#94A3B8" stroke-width="3.5" />
+    <!-- Mountain / Landscape -->
+    <path d="M72 50 L56 34 C54.2 32.2 51.4 32.2 49.6 34 L18 66" stroke="#94A3B8" stroke-width="3.5" />
+  </g>
+</svg>

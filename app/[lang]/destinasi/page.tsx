@@ -53,5 +53,5 @@ export default async function DestinasiPage({ params }: Props) {
   const { lang } = await params;
   const dict = await getDictionary(lang as Locale);
 
-  return <DestinationContent dict={dict} />;
+  return <DestinationContent dict={dict} lang={lang as Locale} />;
 }

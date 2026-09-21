@@ -53,5 +53,5 @@ export default async function UlasanPage({ params }: Props) {
   const { lang } = await params;
   const dict = await getDictionary(lang as Locale);
 
-  return <ReviewsContent dict={dict} />;
+  return <ReviewsContent dict={dict} lang={lang as Locale} />;
 }

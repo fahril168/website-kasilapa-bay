@@ -49,14 +49,14 @@ export default function ReviewsPreview({ dict, lang = "id" }: Props) {
     };
   }, []);
 
-  const reviewsToDisplay = dynamicReviews.length > 0
-    ? dynamicReviews.map((r) => ({
+  const reviewsToDisplay = dynamicReviews.map((r) => ({
         name: r.guest_name,
         origin: r.origin,
         rating: r.rating,
         comment: lang === "en" ? r.comment_en : r.comment_id
-      }))
-    : dict.reviews.items;
+  }));
+
+  if (reviewsToDisplay.length === 0) return null;
 
   // Double the reviews for seamless infinite marquee
   const duplicated = [...reviewsToDisplay, ...reviewsToDisplay];

@@ -57,107 +57,13 @@
       "electricity": "Electricity",
       "water": "Clean Water"
     },
-    "rooms": [
-      {
-        "name": "Standart Room",
-        "description": "This room type is the most economical option, usually intended for solo travelers or couples who want standard accommodation.",
-        "capacity": 2,
-        "price": 250000
-      },
-      {
-        "name": "Deluxe Room",
-        "description": "A room type with a more spacious layout and more comfortable setup for maximum relaxation during your stay on Tomia Island.",
-        "capacity": 2,
-        "price": 300000
-      }
-    ]
+    "rooms": []
   },
   "destination": {
     "title": "Nearby Destinations",
     "subtitle": "Explore the natural wonders and cultural heritage around Tomia Island.",
     "distance": "distance",
-    "places": [
-      {
-        "name": "Kahianga Peak",
-        "category": "Scenic Views",
-        "description": "The highest point on Tomia with endless blue ocean views, green savannah hills, and a gorgeous sunset.",
-        "distance": "10 min drive",
-        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Puncak-Kahianga-by-Amal-Hermawan-428x242.jpg",
-        "url": "https://www.wakatobitourism.com/item/kahianga-peak/"
-      },
-      {
-        "name": "Kulati Village",
-        "category": "History & Culture",
-        "description": "A community-based ecotourism destination featuring spectacular cliffside ocean panoramas like Huntete Beach.",
-        "distance": "20 min drive",
-        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Huuntete-Beach-Kulati-by-Muis-Bhojest-min-428x242.jpg",
-        "url": "https://www.wakatobitourism.com/item/kulati-village/"
-      },
-      {
-        "name": "Lentea Island",
-        "category": "Beach",
-        "description": "A neighboring island boasting incredibly soft white sand beaches, towering coconut trees, and crystal clear water.",
-        "distance": "30 min by boat",
-        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Pulau-Lentea-Tomia-49-428x242.jpg",
-        "url": "https://www.wakatobitourism.com/item/lintea-island/"
-      },
-      {
-        "name": "Roma",
-        "category": "Diving",
-        "description": "The most famous dive site in Wakatobi, teeming with marine life and schooling fish around a massive pinnacled reef.",
-        "distance": "15 min by boat",
-        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Roma-by-Wakatobi-Regency-428x242.jpg",
-        "url": "https://www.wakatobitourism.com/item/roma/"
-      },
-      {
-        "name": "Nda'a Island",
-        "category": "Beach",
-        "description": "An uninhabited island featuring powder-white sand beaches and a shallow, pristine coral reef ecosystem.",
-        "distance": "40 min by boat",
-        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Ndaa-Island-by-Guntur-2-428x242.jpg",
-        "url": "https://www.wakatobitourism.com/item/ndaa-island/"
-      },
-      {
-        "name": "Patua Fort",
-        "category": "History & Culture",
-        "description": "An ancient hilltop fortress made of coral stones from the Buton Sultanate era, offering a majestic landscape.",
-        "distance": "18 min drive",
-        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Patua-Fort-by-Amal-Hermawan-428x242.jpg",
-        "url": "https://www.wakatobitourism.com/item/patua-fort/"
-      },
-      {
-        "name": "Ali Reef",
-        "category": "Diving",
-        "description": "A popular diving site famous for massive schools of colorful fish swimming amongst healthy coral reefs.",
-        "distance": "20 min by boat",
-        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Fish-Schooling-by-DCDC-min-428x242.jpg",
-        "url": "https://www.wakatobitourism.com/item/ali-reef/"
-      },
-      {
-        "name": "Kolosuha",
-        "category": "Diving",
-        "description": "A steep underwater wall reef on the west side of Tomia Island, bursting with marine biodiversity.",
-        "distance": "18 min by boat",
-        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Kolosuha-by-Wakatobi-Regency-428x242.jpg",
-        "url": "https://www.wakatobitourism.com/item/kolosuha/"
-      },
-      {
-        "name": "Mari Mabuk",
-        "category": "Diving",
-        "description": "A top-rated coral garden dive spot offering gorgeous sea life sights with friendly, gentle currents.",
-        "distance": "15 min by boat",
-        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/05/Mari-Mabuk-by-Hendra-Tan-min-1-428x242.jpg",
-        "url": "https://www.wakatobitourism.com/item/mari-mabuk/"
-      },
-      {
-        "name": "Wreck of Kulati",
-        "category": "Diving",
-        "description": "A historic shipwreck site near Kulati Village, now fully covered in beautiful corals and home to marine life.",
-        "distance": "25 min by boat",
-        "image": "https://www.wakatobitourism.com/wp-content/uploads/2018/04/Wreck-Kulati-by-Guntur-428x242.jpg",
-        "url": "https://www.wakatobitourism.com/item/wreck-of-kulati/"
-      }
-    ]
+    "places": []
   },
   "gallery": {
     "title": "Gallery",
@@ -173,32 +79,7 @@
   "reviews": {
     "title": "Guest Reviews",
     "subtitle": "What our guests say about their stay at Kasilapa Bay.",
-    "items": [
-      {
-        "name": "Andi Pratama",
-        "origin": "Jakarta, Indonesia",
-        "rating": 5,
-        "comment": "Incredibly peaceful. The reef is right in front of the homestay. The host is very friendly and the food is authentic. Will definitely return."
-      },
-      {
-        "name": "Sarah Mitchell",
-        "origin": "Melbourne, Australia",
-        "rating": 5,
-        "comment": "One of the best places I've ever visited. Crystal-clear water, healthy coral reefs, and a tranquility that's hard to find anywhere else."
-      },
-      {
-        "name": "Budi Setiawan",
-        "origin": "Surabaya, Indonesia",
-        "rating": 4,
-        "comment": "A truly memorable stay. The kids loved snorkeling right from the beach. Simple facilities but clean and comfortable."
-      },
-      {
-        "name": "Yuki Tanaka",
-        "origin": "Osaka, Japan",
-        "rating": 5,
-        "comment": "Diving at Roma Wall is unmatched. And coming back to Kasilapa Bay after a dive feels like coming home. A very special place."
-      }
-    ]
+    "items": []
   },
   "contact": {
     "title": "Contact Us",

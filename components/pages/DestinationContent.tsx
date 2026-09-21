@@ -13,6 +13,28 @@ type Props = {
   lang?: Locale;
 };
 
+function formatDistance(distStr: string, isEn: boolean): string {
+  if (!distStr || !isEn) return distStr || "";
+  return distStr
+    .replace(/menit berkendara/gi, "min drive")
+    .replace(/menit perahu/gi, "min by boat")
+    .replace(/menit jalan kaki/gi, "min walk")
+    .replace(/menit/gi, "mins");
+}
+
+function formatCategory(cat: string, isEn: boolean): string {
+  if (!cat || !isEn) return cat || "Nature";
+  const map: Record<string, string> = {
+    "Pemandangan Alam": "Scenic Views",
+    "Alam": "Nature",
+    "Sejarah & Budaya": "History & Culture",
+    "Pantai": "Beach",
+    "Diving": "Diving",
+    "Kuliner": "Culinary",
+  };
+  return map[cat] || cat;
+}
+
 export default function DestinationContent({ dict, lang = "id" }: Props) {
   const [dynamicPlaces, setDynamicPlaces] = useState<any[]>([]);
 
@@ -50,16 +72,16 @@ export default function DestinationContent({ dict, lang = "id" }: Props) {
     };
   }, []);
 
-  const placesToDisplay = dynamicPlaces.length > 0
-    ? dynamicPlaces.map((d) => ({
-        name: lang === "en" ? d.name_en : d.name_id,
-        category: d.category,
-        description: lang === "en" ? d.description_en : d.description_id,
-        distance: d.distance,
-        image: d.image_url,
+  const placesToDisplay = dynamicPlaces.map((d) => ({
+        name: (lang === "en" ? d.name_en : d.name_id) || d.name_id || d.name_en || "Destinasi Wisata",
+        category: formatCategory(d.category, lang === "en"),
+        description: (lang === "en" ? d.description_en : d.description_id) || d.description_id || d.description_en || "",
+        distance: formatDistance(d.distance, lang === "en"),
+        image: d.image_url || "/img/placeholder.svg",
         url: d.info_url || "#"
-      }))
-    : dict.destination.places;
+  }));
+
+  if (placesToDisplay.length === 0) return null;
 
   return (
     <section className="pt-16 section-padding bg-background">
@@ -91,12 +113,14 @@ export default function DestinationContent({ dict, lang = "id" }: Props) {
                   : "aspect-[4/3]"
               }`}
             >
-              {/* Image */}
-              <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
-                style={{
-                  backgroundImage: `url('${place.image}')`,
+              {/* Image with fallback */}
+              <img
+                src={place.image || "/img/placeholder.svg"}
+                alt={place.name}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = "/img/placeholder.svg";
                 }}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
 
               {/* Gradient */}
