@@ -5,7 +5,11 @@
   # Matikan auto-redirect /dir ke /dir/ oleh Apache
   DirectorySlash Off
 
-  # 1. Jika request adalah file fisik yang nyata (gambar, php, js, css, html)
+  # 0. Redirect root URL (/) dan index.html langsung ke /id
+  RewriteRule ^$ /id [R=301,L]
+  RewriteRule ^index\.html$ /id [R=301,L]
+
+  # 1. Jika request adalah file fisik yang nyata (gambar, php, js, css)
   RewriteCond %{REQUEST_FILENAME} -f
   RewriteRule ^ - [L]
 
