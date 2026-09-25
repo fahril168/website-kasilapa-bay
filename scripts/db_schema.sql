@@ -33,12 +33,13 @@ CREATE TABLE IF NOT EXISTS `rooms` (
   `image_url` VARCHAR(255) NOT NULL,
   `description_id` TEXT,
   `description_en` TEXT,
+  `is_active` TINYINT(1) DEFAULT 1,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT IGNORE INTO `rooms` (`id`, `title_id`, `title_en`, `slug`, `price_per_night`, `capacity`, `bed_type`, `image_url`, `description_id`, `description_en`) VALUES
-(1, 'Standart Room', 'Standard Room', 'standart-room', 250000.00, 2, 'Double Bed', '/img/room.webp', 'Tipe kamar ini merupakan opsi paling ekonomis, biasanya ditujukan untuk solo traveler atau dua orang yang menginginkan akomodasi standar.', 'The most economical option, perfect for solo travelers or couples looking for standard accommodation.'),
-(2, 'Deluxe Room', 'Deluxe Room', 'deluxe-room', 300000.00, 2, 'King Bed', '/img/room.webp', 'Tipe kamar dengan ukuran ruang yang lebih lapang dan penataan yang lebih nyaman untuk istirahat maksimal selama berada di Pulau Tomia.', 'Spacious room with a comfortable layout designed for maximum relaxation during your stay on Tomia Island.');
+INSERT IGNORE INTO `rooms` (`id`, `title_id`, `title_en`, `slug`, `price_per_night`, `capacity`, `bed_type`, `image_url`, `description_id`, `description_en`, `is_active`) VALUES
+(1, 'Standart Room', 'Standard Room', 'standart-room', 250000.00, 2, 'Double Bed', '/img/room.webp', 'Tipe kamar ini merupakan opsi paling ekonomis, biasanya ditujukan untuk solo traveler atau dua orang yang menginginkan akomodasi standar.', 'The most economical option, perfect for solo travelers or couples looking for standard accommodation.', 1),
+(2, 'Deluxe Room', 'Deluxe Room', 'deluxe-room', 300000.00, 2, 'King Bed', '/img/room.webp', 'Tipe kamar dengan ukuran ruang yang lebih lapang dan penataan yang lebih nyaman untuk istirahat maksimal selama berada di Pulau Tomia.', 'Spacious room with a comfortable layout designed for maximum relaxation during your stay on Tomia Island.', 1);
 
 -- 3. Table: destinations (Stores tourist spots & diving sites around Tomia)
 CREATE TABLE IF NOT EXISTS `destinations` (
@@ -201,6 +202,7 @@ CREATE TABLE IF NOT EXISTS `site_settings` (
   `about_headline_en` TEXT,
   `about_description_en` TEXT,
   `about_images` TEXT,
+  `room_layout_single` VARCHAR(50) DEFAULT 'split',
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

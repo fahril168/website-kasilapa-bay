@@ -10,6 +10,16 @@ require_once __DIR__ . '/config.php';
 $pdo = getDbConnection();
 $method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
 
+// Ensure is_active column exists safely across all MySQL versions (Hostinger self-healing)
+try {
+    $pdo->query("SELECT is_active FROM rooms LIMIT 1");
+} catch (Exception $e) {
+    try {
+        $pdo->exec("ALTER TABLE rooms ADD COLUMN is_active TINYINT(1) DEFAULT 1");
+        $pdo->exec("UPDATE rooms SET is_active = 1 WHERE is_active IS NULL");
+    } catch (Exception $ex) {}
+}
+
 // Helper: fetch all attached images for a room
 function fetchRoomImagesList($pdo, $roomId) {
     $stmt = $pdo->prepare("
@@ -89,7 +99,9 @@ switch ($method) {
                 echo json_encode(["status" => "error", "message" => "Room not found."]);
             }
         } else {
-            $stmt = $pdo->query("SELECT * FROM rooms ORDER BY id DESC");
+            $showAll = isset($_GET['all']) && ($_GET['all'] === '1' || $_GET['all'] === 'true');
+            $whereSql = $showAll ? "" : "WHERE is_active = 1";
+            $stmt = $pdo->query("SELECT * FROM rooms $whereSql ORDER BY id ASC");
             $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if (!empty($rooms)) {
@@ -145,9 +157,10 @@ switch ($method) {
         }
 
         $coverUrl = $input['image_url'] ?? '/img/room.webp';
+        $isActive = isset($input['is_active']) ? (int)$input['is_active'] : 1;
 
-        $sql = "INSERT INTO rooms (title_id, title_en, slug, price_per_night, capacity, bed_type, image_url, description_id, description_en) 
-                VALUES (:title_id, :title_en, :slug, :price_per_night, :capacity, :bed_type, :image_url, :description_id, :description_en)";
+        $sql = "INSERT INTO rooms (title_id, title_en, slug, price_per_night, capacity, bed_type, image_url, description_id, description_en, is_active) 
+                VALUES (:title_id, :title_en, :slug, :price_per_night, :capacity, :bed_type, :image_url, :description_id, :description_en, :is_active)";
         
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
@@ -159,7 +172,8 @@ switch ($method) {
             'bed_type' => $input['bed_type'] ?? 'King Bed',
             'image_url' => $coverUrl,
             'description_id' => $input['description_id'] ?? '',
-            'description_en' => $input['description_en'] ?? ''
+            'description_en' => $input['description_en'] ?? '',
+            'is_active' => $isActive
         ]);
 
         $newRoomId = (int)$pdo->lastInsertId();
@@ -203,6 +217,19 @@ switch ($method) {
 
         $roomId = (int)$input['id'];
 
+        // Quick toggle is_active (from admin switch)
+        if (isset($input['is_active']) && !isset($input['title_id']) && !isset($input['price_per_night'])) {
+            $stmt = $pdo->prepare("UPDATE rooms SET is_active = :is_active WHERE id = :id");
+            $stmt->execute([
+                'id' => $roomId,
+                'is_active' => (int)$input['is_active']
+            ]);
+            echo json_encode(["status" => "success", "message" => "Status kamar berhasil diperbarui."]);
+            break;
+        }
+
+        $isActive = isset($input['is_active']) ? (int)$input['is_active'] : 1;
+
         $sql = "UPDATE rooms SET 
                     title_id = :title_id, 
                     title_en = :title_en, 
@@ -212,7 +239,8 @@ switch ($method) {
                     bed_type = :bed_type, 
                     image_url = :image_url, 
                     description_id = :description_id, 
-                    description_en = :description_en 
+                    description_en = :description_en,
+                    is_active = :is_active
                 WHERE id = :id";
 
         $stmt = $pdo->prepare($sql);
@@ -226,7 +254,8 @@ switch ($method) {
             'bed_type' => $input['bed_type'] ?? 'Double Bed',
             'image_url' => $input['image_url'] ?? '/img/room.webp',
             'description_id' => $input['description_id'] ?? '',
-            'description_en' => $input['description_en'] ?? ''
+            'description_en' => $input['description_en'] ?? '',
+            'is_active' => $isActive
         ]);
 
         // Synchronize multi-images if array is provided

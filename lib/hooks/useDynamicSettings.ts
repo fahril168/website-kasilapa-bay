@@ -24,6 +24,7 @@ export type DynamicSettings = {
   about_headline_en: string;
   about_description_en: string;
   about_images?: string[];
+  room_layout_single?: "split" | "centered" | "banner" | "grid";
 };
 
 export function useDynamicContacts() {
@@ -138,6 +139,7 @@ export function useDynamicSettings() {
 
   return {
     settings,
+    roomLayoutSingle: settings?.room_layout_single || "split",
     ...contactsHook,
   };
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
 import SectionHeader from "@/components/SectionHeader";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { getApiUrl } from "@/lib/utils";
@@ -12,6 +12,46 @@ type Props = {
   dict: Dictionary;
   lang?: Locale;
 };
+
+function getBentoSpan(index: number, total: number): string {
+  if (total === 1) {
+    return "col-span-2 lg:col-span-4 aspect-[16/9]";
+  }
+  if (total === 2) {
+    return "col-span-1 lg:col-span-2 aspect-[4/3] lg:aspect-[16/10]";
+  }
+  if (total === 3) {
+    return index === 0
+      ? "col-span-2 lg:col-span-2 aspect-[16/10]"
+      : "col-span-1 lg:col-span-1 aspect-square lg:aspect-[16/10]";
+  }
+  if (total === 6 && index === 5) {
+    return "col-span-2 lg:col-span-4 aspect-[16/10] lg:aspect-[21/9]";
+  }
+  // If exactly 2 items remaining at the end that would leave half a row in a 4-col grid
+  const remaining = total - index;
+  if (remaining <= 2 && total % 4 === 2) {
+    return "col-span-1 lg:col-span-2 aspect-[4/3] lg:aspect-[16/9]";
+  }
+
+  // Standard repeating Bento cycle (every 8 items)
+  const cycle = index % 8;
+  switch (cycle) {
+    case 0:
+      return "col-span-2 lg:col-span-2 lg:row-span-2 aspect-[16/10] lg:aspect-square";
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+      return "col-span-1 lg:col-span-1 aspect-square";
+    case 5:
+      return "col-span-2 lg:col-span-2 aspect-[16/10] lg:aspect-[16/9]";
+    case 6:
+    case 7:
+    default:
+      return "col-span-1 lg:col-span-1 aspect-square";
+  }
+}
 
 const defaultRoomGalleryImages = [
   { src: "/img/room.webp", category: "property" as const, alt: "Standart Room" },
@@ -126,21 +166,14 @@ export default function GalleryContent({ dict, lang = "id" }: Props) {
             ))}
           </div>
 
-          {/* Masonry layout */}
+          {/* Bento Grid Layout */}
           <motion.div
             layout
-            className="columns-2 md:columns-3 lg:columns-4 gap-3 sm:gap-4"
+            className="grid grid-cols-2 lg:grid-cols-4 grid-flow-row-dense gap-3 sm:gap-4 lg:gap-5"
           >
             <AnimatePresence mode="popLayout">
               {filtered.map((img, i) => {
-                let aspectClass = "aspect-auto";
-                if (i % 3 === 0) {
-                  aspectClass = "aspect-[3/4]";
-                } else if (i % 3 === 1) {
-                  aspectClass = "aspect-square";
-                } else {
-                  aspectClass = "aspect-[4/3]";
-                }
+                const bentoSpan = getBentoSpan(i, filtered.length);
 
                 return (
                   <motion.button
@@ -149,9 +182,9 @@ export default function GalleryContent({ dict, lang = "id" }: Props) {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
                     onClick={() => setLightbox(i)}
-                    className={`img-zoom relative cursor-pointer block w-full rounded-lg overflow-hidden mb-3 sm:mb-4 break-inside-avoid ${aspectClass}`}
+                    className={`group relative cursor-pointer block w-full rounded-xl sm:rounded-2xl overflow-hidden border border-border/30 bg-muted/20 shadow-xs hover:shadow-xl transition-all duration-300 ${bentoSpan}`}
                   >
                     <img
                       src={img.src || "/img/placeholder.svg"}
@@ -159,10 +192,24 @@ export default function GalleryContent({ dict, lang = "id" }: Props) {
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = "/img/placeholder.svg";
                       }}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-foreground/0 hover:bg-foreground/20 transition-colors duration-300" />
+
+                    {/* Gradient Overlay & Metadata */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3.5 sm:p-5 text-left">
+                      <span className="text-[10px] sm:text-[11px] uppercase font-bold tracking-wider text-gold mb-1">
+                        {img.category}
+                      </span>
+                      <p className="text-white text-xs sm:text-base font-serif font-medium line-clamp-2">
+                        {img.alt}
+                      </p>
+                    </div>
+
+                    {/* Expand icon pill */}
+                    <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100 bg-black/50 backdrop-blur-md rounded-full p-1.5 sm:p-2 text-white border border-white/10">
+                      <Maximize2 size={13} className="text-white/90" />
+                    </div>
                   </motion.button>
                 );
               })}

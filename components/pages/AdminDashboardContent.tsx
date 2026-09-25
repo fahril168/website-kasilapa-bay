@@ -149,12 +149,12 @@ export type UploadProgressItem = {
   url?: string;
 };
 
-type Room = { id: number; title_id: string; title_en: string; slug: string; price_per_night: number; capacity: number; bed_type: string; image_url: string; description_id: string; description_en: string; images?: AttachedImage[] };
+type Room = { id: number; title_id: string; title_en: string; slug: string; price_per_night: number; capacity: number; bed_type: string; image_url: string; description_id: string; description_en: string; images?: AttachedImage[]; is_active?: number | boolean };
 type Destination = { id: number; name_id: string; name_en: string; category: string; description_id: string; description_en: string; distance: string; image_url: string; info_url: string; images?: AttachedImage[] };
 type GalleryItem = { id: number; title_id: string; title_en: string; category: string; image_url: string; is_active?: number | boolean; thumbnail_url?: string | null };
 type Review = { id: number; guest_name: string; origin: string; rating: number; comment_id: string; comment_en: string; is_visible: number };
 type Facility = { id: number; title_id: string; title_en: string; icon_name: string; is_active: number };
-type SiteSettings = { about_headline_id: string; about_description_id: string; about_headline_en: string; about_description_en: string; about_images?: string[] };
+type SiteSettings = { about_headline_id: string; about_description_id: string; about_headline_en: string; about_description_en: string; about_images?: string[]; room_layout_single?: "split" | "centered" | "banner" | "grid" };
 type SiteContacts = { 
   phone_primary: string; 
   phone_secondary: string; 
@@ -503,6 +503,54 @@ export default function AdminDashboardContent() {
     }
   }
 
+  async function toggleRoomActive(item: Room) {
+    const currentActive = item.is_active !== 0 && item.is_active !== false;
+    const newActive = currentActive ? 0 : 1;
+    // Optimistic UI update & storage sync
+    setRooms(prev => {
+      const updated = prev.map(r => r.id === item.id ? { ...r, is_active: newActive } : r);
+      setStoredData(STORAGE_KEYS.ROOMS, updated);
+      return updated;
+    });
+
+    setToast({ 
+      type: "ok", 
+      text: `Kamar "${item.title_id}" berhasil ${newActive === 1 ? "diaktifkan (tampil di website)" : "dinonaktifkan (disembunyikan)"}!` 
+    });
+
+    try {
+      await fetch(getApiUrl("/api/kamar.php"), {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${authToken}` },
+        body: JSON.stringify({ id: item.id, is_active: newActive })
+      });
+    } catch {
+      // Local persistent storage already updated
+    }
+  }
+
+  async function handleRoomLayoutChange(layout: "split" | "centered" | "banner" | "grid") {
+    const updatedSettings: SiteSettings = { ...settings, room_layout_single: layout };
+    setSettings(updatedSettings);
+    setStoredData(STORAGE_KEYS.SETTINGS, updatedSettings);
+    setToast({ 
+      type: "ok", 
+      text: `Tata letak kamar berhasil diubah ke: ${
+        layout === "grid" ? "Grid 2 Kolom (Berdampingan)" : layout === "split" ? "Split Showcase (Kiri Foto, Kanan Info)" : layout === "centered" ? "Centered Card (Kartu Terpusat)" : "Cinematic Banner"
+      }!` 
+    });
+
+    try {
+      await fetch(getApiUrl("/api/pengaturan.php"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${authToken}` },
+        body: JSON.stringify(updatedSettings)
+      });
+    } catch {
+      // Local persistent storage already updated
+    }
+  }
+
   /* ── Single Image Upload Helper (for legacy / gallery) ── */
   async function handleFileUpload(file: File, onSuccess: (url: string, imageId?: number) => void) {
     if (!file) return;
@@ -824,7 +872,7 @@ export default function AdminDashboardContent() {
     setLoading(true);
     try {
       const [r1, r2, r3, r4, r5, r6, r7] = await Promise.all([
-        fetch(getApiUrl("/api/kamar.php")).then(r => r.ok ? r.json() : null).catch(() => null),
+        fetch(getApiUrl("/api/kamar.php?all=1")).then(r => r.ok ? r.json() : null).catch(() => null),
         fetch(getApiUrl("/api/destinasi.php")).then(r => r.ok ? r.json() : null).catch(() => null),
         fetch(getApiUrl("/api/galeri.php?all=1")).then(r => r.ok ? r.json() : null).catch(() => null),
         fetch(getApiUrl("/api/ulasan.php")).then(r => r.ok ? r.json() : null).catch(() => null),
@@ -2079,59 +2127,198 @@ export default function AdminDashboardContent() {
 
           {/* ── 1. KAMAR ── */}
           {tab === "rooms" && (
-            <Section 
-              title="Manajemen Kamar & Akomodasi" 
-              desc="Kelola data 2 tipe kamar Kasilapa Bay (Standart Room & Deluxe Room), tarif per malam, fasilitas, dan foto kamar dari Media Library."
-            >
-              <Table heads={["Foto", "Nama Kamar", "Harga / Malam", "Kapasitas", "Tipe Kasur", "Aksi"]}>
-                {rooms.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="text-center py-12 text-slate-500">
-                      <BedDouble size={28} className="mx-auto text-slate-300 mb-2" />
-                      <p className="font-semibold text-sm">Belum ada data kamar di database</p>
-                    </td>
-                  </tr>
-                ) : (
-                  rooms.map(r => (
-                    <tr key={r.id} className="border-b border-slate-100 hover:bg-blue-50/30 transition-colors">
-                      <td className="px-4 py-3">
-                        <div className="relative inline-block">
-                          <img src={r.image_url || "/img/placeholder.svg"} alt={r.title_id} className="w-12 h-12 rounded-xl object-cover border border-slate-200 shadow-2xs" />
-                          {r.images && r.images.length > 0 && (
-                            <span className="absolute -bottom-1 -right-1 bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-full shadow-xs border border-white">
-                              {r.images.length}
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <p className="text-sm font-bold text-slate-800">{r.title_id}</p>
-                        <p className="text-[11px] text-slate-400 font-mono">/{r.slug}</p>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="inline-block bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs px-2.5 py-1 rounded-lg font-bold">
-                          Rp {Number(r.price_per_night).toLocaleString("id-ID")}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-xs font-semibold text-slate-600">{r.capacity} Tamu</td>
-                      <td className="px-4 py-3 text-xs text-slate-600">{r.bed_type}</td>
-                      <td className="px-4 py-3 text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          <button onClick={() => { 
-                            const rImgs = r.images && r.images.length > 0 
-                              ? r.images 
-                              : (r.image_url ? [{ id: (r as any).image_id || 1, url: r.image_url, thumbnail_url: r.image_url, is_cover: 1, sort_order: 0 }] : []);
-                            setEditItem({ ...r, images: rImgs }); 
-                            setModalType("room"); 
-                          }} className={btnGhost}><Pencil size={14} /> Edit</button>
-                          <button onClick={() => deleteItem("/api/kamar.php", r.id, setRooms, rooms, r.title_id)} className={btnDanger}><Trash2 size={14} /></button>
-                        </div>
+            <div className="space-y-6">
+              {/* Layout Mode Selector */}
+              <div className="bg-white border border-[#dee2e6] rounded-lg overflow-hidden shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-5 border-b border-[#dee2e6]">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <Sliders size={16} className="text-[#007bff]" />
+                      <h3 className="text-sm font-bold text-[#212529]">Gaya Tampilan Kamar di Website</h3>
+                    </div>
+                    <p className="text-xs text-[#6c757d] mt-0.5">
+                      Pilih tata letak tampilan kamar di halaman Beranda. Jika kamar aktif lebih dari 1, pengunjung dapat berpindah kamar dengan navigasi kiri &amp; kanan.
+                    </p>
+                  </div>
+                  <span className="shrink-0 text-[11px] font-semibold bg-[#e8f0fe] text-[#1a73e8] border border-[#c6dafc] px-2.5 py-1 rounded-md">
+                    Aktif: {settings?.room_layout_single === "grid" ? "Grid 2 Kolom" : settings?.room_layout_single === "centered" ? "Centered Card" : settings?.room_layout_single === "banner" ? "Cinematic Banner" : "Split Showcase"}
+                  </span>
+                </div>
+
+                <div className="p-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    {/* Option 1: Split Showcase */}
+                    <label
+                      onClick={() => handleRoomLayoutChange("split")}
+                      className={`relative p-4 rounded-md border text-left transition-all cursor-pointer ${
+                        (settings?.room_layout_single || "split") === "split"
+                          ? "border-[#007bff] bg-[#f0f6ff]"
+                          : "border-[#dee2e6] hover:border-[#adb5bd] bg-white"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2 mb-1.5">
+                        <span className="text-xs font-bold text-[#212529]">Split Showcase</span>
+                        <input
+                          type="radio"
+                          name="room_layout"
+                          checked={(settings?.room_layout_single || "split") === "split"}
+                          onChange={() => handleRoomLayoutChange("split")}
+                          className="w-3.5 h-3.5 text-[#007bff] mt-0.5 cursor-pointer"
+                        />
+                      </div>
+                      <p className="text-[11px] text-[#6c757d] leading-relaxed mb-2">
+                        Foto besar di sisi kiri, info kamar dan tombol pesan di kanan.
+                      </p>
+                      <span className="text-[10px] bg-[#fff3cd] text-[#856404] border border-[#ffc107]/30 font-semibold px-1.5 py-0.5 rounded">Rekomendasi</span>
+                    </label>
+
+                    {/* Option 2: Centered Card */}
+                    <label
+                      onClick={() => handleRoomLayoutChange("centered")}
+                      className={`relative p-4 rounded-md border text-left transition-all cursor-pointer ${
+                        settings?.room_layout_single === "centered"
+                          ? "border-[#007bff] bg-[#f0f6ff]"
+                          : "border-[#dee2e6] hover:border-[#adb5bd] bg-white"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2 mb-1.5">
+                        <span className="text-xs font-bold text-[#212529]">Centered Card</span>
+                        <input
+                          type="radio"
+                          name="room_layout"
+                          checked={settings?.room_layout_single === "centered"}
+                          onChange={() => handleRoomLayoutChange("centered")}
+                          className="w-3.5 h-3.5 text-[#007bff] mt-0.5 cursor-pointer"
+                        />
+                      </div>
+                      <p className="text-[11px] text-[#6c757d] leading-relaxed">
+                        Kartu lebar memenuhi container dengan navigasi panah kiri &amp; kanan.
+                      </p>
+                    </label>
+
+                    {/* Option 3: Cinematic Banner */}
+                    <label
+                      onClick={() => handleRoomLayoutChange("banner")}
+                      className={`relative p-4 rounded-md border text-left transition-all cursor-pointer ${
+                        settings?.room_layout_single === "banner"
+                          ? "border-[#007bff] bg-[#f0f6ff]"
+                          : "border-[#dee2e6] hover:border-[#adb5bd] bg-white"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2 mb-1.5">
+                        <span className="text-xs font-bold text-[#212529]">Cinematic Banner</span>
+                        <input
+                          type="radio"
+                          name="room_layout"
+                          checked={settings?.room_layout_single === "banner"}
+                          onChange={() => handleRoomLayoutChange("banner")}
+                          className="w-3.5 h-3.5 text-[#007bff] mt-0.5 cursor-pointer"
+                        />
+                      </div>
+                      <p className="text-[11px] text-[#6c757d] leading-relaxed">
+                        Banner full-bleed edge-to-edge dengan navigasi kamar sinematik.
+                      </p>
+                    </label>
+
+                    {/* Option 4: Grid 2 Kolom */}
+                    <label
+                      onClick={() => handleRoomLayoutChange("grid")}
+                      className={`relative p-4 rounded-md border text-left transition-all cursor-pointer ${
+                        settings?.room_layout_single === "grid"
+                          ? "border-[#007bff] bg-[#f0f6ff]"
+                          : "border-[#dee2e6] hover:border-[#adb5bd] bg-white"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2 mb-1.5">
+                        <span className="text-xs font-bold text-[#212529]">Grid 2 Kolom</span>
+                        <input
+                          type="radio"
+                          name="room_layout"
+                          checked={settings?.room_layout_single === "grid"}
+                          onChange={() => handleRoomLayoutChange("grid")}
+                          className="w-3.5 h-3.5 text-[#007bff] mt-0.5 cursor-pointer"
+                        />
+                      </div>
+                      <p className="text-[11px] text-[#6c757d] leading-relaxed">
+                        Menampilkan kamar berdampingan secara bersamaan (kiri &amp; kanan).
+                      </p>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <Section 
+                title="Manajemen Kamar &amp; Akomodasi" 
+                desc="Kelola status aktif kamar di website, tarif per malam, fasilitas, dan foto kamar dari Media Library."
+              >
+                <Table heads={["Foto", "Nama Kamar", "Harga / Malam", "Kapasitas", "Tipe Kasur", "Status Website", "Aksi"]}>
+                  {rooms.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="text-center py-12 text-[#6c757d]">
+                        <BedDouble size={28} className="mx-auto text-[#adb5bd] mb-2" />
+                        <p className="font-semibold text-sm">Belum ada data kamar di database</p>
                       </td>
                     </tr>
-                  ))
-                )}
-              </Table>
-            </Section>
+                  ) : (
+                    rooms.map(r => {
+                      const isActive = r.is_active !== 0 && r.is_active !== false;
+                      return (
+                        <tr key={r.id} className={`border-b border-[#dee2e6] transition-colors ${isActive ? "hover:bg-[#f0f6ff]/50" : "bg-[#f8f9fa] opacity-60 hover:opacity-100"}`}>
+                          <td className="px-4 py-3">
+                            <div className="relative inline-block">
+                              <img src={r.image_url || "/img/placeholder.svg"} alt={r.title_id} className="w-12 h-12 rounded-lg object-cover border border-[#dee2e6] shadow-2xs" />
+                              {r.images && r.images.length > 0 && (
+                                <span className="absolute -bottom-1 -right-1 bg-[#007bff] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow-xs border-2 border-white">
+                                  {r.images.length}
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <p className="text-sm font-bold text-[#212529]">{r.title_id}</p>
+                            <p className="text-[11px] text-[#adb5bd] font-mono">/{r.slug}</p>
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className="inline-block bg-[#d4edda] text-[#155724] border border-[#c3e6cb] text-xs px-2.5 py-1 rounded-md font-bold">
+                              Rp {Number(r.price_per_night).toLocaleString("id-ID")}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-xs font-semibold text-[#495057]">{r.capacity} Tamu</td>
+                          <td className="px-4 py-3 text-xs text-[#495057]">{r.bed_type}</td>
+                          <td className="px-4 py-3">
+                            <button
+                              type="button"
+                              onClick={() => toggleRoomActive(r)}
+                              title={isActive ? "Klik untuk sembunyikan kamar ini dari website" : "Klik untuk tampilkan kamar ini di website"}
+                              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold transition-all border shadow-2xs cursor-pointer ${
+                                isActive
+                                  ? "bg-[#d4edda] text-[#155724] border-[#c3e6cb] hover:bg-[#c3e6cb]"
+                                  : "bg-[#f8f9fa] text-[#6c757d] border-[#dee2e6] hover:bg-[#e9ecef]"
+                              }`}
+                            >
+                              <span className={`w-2 h-2 rounded-full ${isActive ? "bg-[#28a745]" : "bg-[#adb5bd]"}`} />
+                              {isActive ? "Aktif (Tampil)" : "Nonaktif"}
+                            </button>
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            <div className="flex items-center justify-end gap-1">
+                              <button onClick={() => { 
+                                const rImgs = r.images && r.images.length > 0 
+                                  ? r.images 
+                                  : (r.image_url ? [{ id: (r as any).image_id || 1, url: r.image_url, thumbnail_url: r.image_url, is_cover: 1, sort_order: 0 }] : []);
+                                setEditItem({ ...r, images: rImgs, is_active: isActive ? 1 : 0 }); 
+                                setModalType("room"); 
+                              }} className={btnGhost}><Pencil size={14} /> Edit</button>
+                              <button onClick={() => deleteItem("/api/kamar.php", r.id, setRooms, rooms, r.title_id)} className={btnDanger}><Trash2 size={14} /></button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </Table>
+              </Section>
+            </div>
           )}
 
           {/* ── 2. DESTINASI ── */}
@@ -2714,6 +2901,25 @@ export default function AdminDashboardContent() {
                   <Field label="Harga / Malam (Rp)" value={editItem.price_per_night} onChange={v => setEditItem((prev: any) => ({ ...prev, price_per_night: Number(v) }))} type="number" required />
                   <Field label="Kapasitas (Tamu)" value={editItem.capacity} onChange={v => setEditItem((prev: any) => ({ ...prev, capacity: Number(v) }))} type="number" required />
                   <Field label="Tipe Kasur" value={editItem.bed_type} onChange={v => setEditItem((prev: any) => ({ ...prev, bed_type: v }))} required />
+                </div>
+                <div className="flex items-center justify-between p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
+                  <div>
+                    <label className="text-xs font-bold text-slate-800 block">Status Tampilan di Website</label>
+                    <p className="text-[11px] text-slate-500">Kamar ini {editItem.is_active !== 0 && editItem.is_active !== false ? "sedang aktif dan tampil di website publik" : "disembunyikan dari website"}.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setEditItem((prev: any) => ({ ...prev, is_active: (prev.is_active !== 0 && prev.is_active !== false) ? 0 : 1 }))}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden ${
+                      (editItem.is_active !== 0 && editItem.is_active !== false) ? "bg-blue-600" : "bg-slate-300"
+                    }`}
+                  >
+                    <span
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                        (editItem.is_active !== 0 && editItem.is_active !== false) ? "translate-x-5" : "translate-x-0"
+                      }`}
+                    />
+                  </button>
                 </div>
                 <MultiImageManager
                   images={editItem.images || []}
@@ -3600,12 +3806,14 @@ function Table({ heads, children }: { heads: string[]; children: React.ReactNode
   );
 }
 
-function Card({ title, children }: { title: string; children: React.ReactNode }) {
+function Card({ title, children }: { title?: string; children: React.ReactNode }) {
   return (
     <div className="bg-white border border-[#dee2e6] rounded-lg p-6 shadow-xs">
-      <h3 className="text-base font-bold text-[#212529] mb-4 pb-3 border-b border-[#dee2e6] flex items-center gap-2">
-        <Sparkles size={18} className="text-[#007bff]" /> {title}
-      </h3>
+      {title && (
+        <h3 className="text-base font-bold text-[#212529] mb-4 pb-3 border-b border-[#dee2e6] flex items-center gap-2">
+          <Sparkles size={18} className="text-[#007bff]" /> {title}
+        </h3>
+      )}
       {children}
     </div>
   );

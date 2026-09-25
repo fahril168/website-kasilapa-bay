@@ -203,6 +203,8 @@ export default function AboutSection({ dict, lang = "id" }: Props) {
                     <img
                       src={img.src || "/img/hero.webp"}
                       alt={img.alt}
+                      loading="lazy"
+                      decoding="async"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = "/img/hero.webp";
                       }}

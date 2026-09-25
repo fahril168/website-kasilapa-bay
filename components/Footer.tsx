@@ -156,10 +156,10 @@ export default function Footer({ lang, dict }: FooterProps) {
 
         {/* Bottom bar */}
         <div className="mt-16 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-white/30 font-medium">
+          <p className="text-xs text-white/60 font-medium">
             © {year} Kasilapa Bay. {dict.footer.rights}
           </p>
-          <p className="text-xs text-white/30 font-medium">
+          <p className="text-xs text-white/60 font-medium">
             Tomia Island, Wakatobi, Indonesia
           </p>
         </div>

@@ -17,10 +17,10 @@ export default async function HomePage({ params }: Props) {
   return (
     <>
       <HeroSection dict={dict} lang={lang as Locale} />
-      <AboutSection dict={dict} />
+      <AboutSection dict={dict} lang={lang as Locale} />
       <FeaturedRooms dict={dict} lang={lang as Locale} />
       <FeaturedDestinations dict={dict} lang={lang as Locale} />
-      <ReviewsPreview dict={dict} />
+      <ReviewsPreview dict={dict} lang={lang as Locale} />
       <CtaBanner dict={dict} />
     </>
   );

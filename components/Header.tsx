@@ -71,6 +71,8 @@ export default function Header({ lang, dict }: HeaderProps) {
             <img
               src={isTransparent ? "/img/logo-putih.png" : "/img/logo.png"}
               alt="Kasilapa Bay"
+              width={52}
+              height={48}
               className={`w-auto object-contain transition-all duration-300 ${
                 scrolled ? "h-9 lg:h-10" : "h-11 lg:h-13"
               }`}

@@ -364,7 +364,9 @@ export default function AccommodationContent({ dict, lang }: Props) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [lightbox]);
 
-  const roomsToDisplay: RoomItem[] = dynamicRooms.map((r, i) => {
+  const roomsToDisplay: RoomItem[] = dynamicRooms
+    .filter((r) => r.is_active !== 0 && r.is_active !== false && r.is_active !== "0")
+    .map((r, i) => {
         const imageList = Array.isArray(r.images) && r.images.length > 0
           ? r.images.map((img: any) => typeof img === "string" ? img : img.url).filter(Boolean)
           : [r.image_url || defaultRoomImages[i % defaultRoomImages.length]];

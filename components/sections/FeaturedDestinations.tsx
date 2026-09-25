@@ -39,7 +39,7 @@ export default function FeaturedDestinations({ dict, lang }: Props) {
   const [dynamicPlaces, setDynamicPlaces] = useState<any[]>([]);
 
   useEffect(() => {
-    // 1. Initial load from local persistent storage
+    // 1. Initial load from local persistent storage (slice 0, 5 for desktop)
     const stored = getStoredData<any[]>(STORAGE_KEYS.DESTINATIONS, []);
     if (Array.isArray(stored) && stored.length > 0) {
       setDynamicPlaces(stored.slice(0, 5));
@@ -73,25 +73,25 @@ export default function FeaturedDestinations({ dict, lang }: Props) {
   }, []);
 
   const places = dynamicPlaces.map((d) => ({
-        name: (lang === "en" ? d.name_en : d.name_id) || d.name_id || d.name_en || "Destinasi Wisata",
-        category: formatCategory(d.category, lang === "en"),
-        description: (lang === "en" ? d.description_en : d.description_id) || d.description_id || d.description_en || "",
-        distance: formatDistance(d.distance, lang === "en"),
-        image: d.image_url || "/img/placeholder.svg",
-        url: d.info_url || "#"
+    name: (lang === "en" ? d.name_en : d.name_id) || d.name_id || d.name_en || "Destinasi Wisata",
+    category: formatCategory(d.category, lang === "en"),
+    description: (lang === "en" ? d.description_en : d.description_id) || d.description_id || d.description_en || "",
+    distance: formatDistance(d.distance, lang === "en"),
+    image: d.image_url || "/img/placeholder.svg",
+    url: d.info_url || "#"
   }));
 
   if (places.length === 0) return null;
 
   return (
-    <section className="section-padding relative overflow-hidden">
-      {/* Background Image */}
+    <section className="section-padding bg-background relative overflow-hidden grain-overlay">
+      {/* Background Image - Fixed position so it doesn't scroll with content */}
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat sm:bg-fixed"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed pointer-events-none"
         style={{ backgroundImage: "url('/img/beach.webp')" }}
       />
       {/* Overlay to soften background image */}
-      <div className="absolute inset-0 bg-background/55" />
+      <div className="absolute inset-0 bg-background/55 pointer-events-none" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         <motion.div
@@ -107,11 +107,11 @@ export default function FeaturedDestinations({ dict, lang }: Props) {
           </h2>
         </motion.div>
 
-        {/* Grid Layout matching the Destination Page (2 rows: Puncak Kahianga is 2-col, others are 1-col) */}
+        {/* Grid Layout (Desktop: 5 cards in 2 rows, Mobile: max 3 cards) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 grid-flow-row-dense gap-4 sm:gap-5">
           {places.map((place: any, i) => (
             <motion.a
-              key={place.name}
+              key={`dest-${place.name}-${i}`}
               href={place.url}
               target="_blank"
               rel="noopener noreferrer"
@@ -119,17 +119,22 @@ export default function FeaturedDestinations({ dict, lang }: Props) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-20px" }}
               transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.1 }}
-              className={`group relative rounded-xl overflow-hidden cursor-pointer block ${i === 0
-                  ? "sm:col-span-2 lg:col-span-2 aspect-[16/9]"
+              className={`group relative rounded-xl overflow-hidden cursor-pointer block ${
+                i >= 3 ? "hidden sm:block " : ""
+              }${
+                i === 0
+                  ? "sm:col-span-2 lg:col-span-2 aspect-[4/3] sm:aspect-[16/9]"
                   : i === 1
                     ? "aspect-[4/3] lg:aspect-[8/9]"
                     : "aspect-[4/3]"
-                }`}
+              }`}
             >
               {/* Image with fallback */}
               <img
                 src={place.image || "/img/placeholder.svg"}
                 alt={place.name}
+                loading="lazy"
+                decoding="async"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = "/img/placeholder.svg";
                 }}
@@ -137,7 +142,7 @@ export default function FeaturedDestinations({ dict, lang }: Props) {
               />
 
               {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1a1714]/80 via-[#1a1714]/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1a1714]/90 via-[#1a1714]/40 to-transparent" />
 
               {/* Category badge */}
               <div className="absolute top-4 left-4 z-10">
@@ -151,7 +156,7 @@ export default function FeaturedDestinations({ dict, lang }: Props) {
                 <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white font-serif mb-2 group-hover:text-gold transition-colors duration-300">
                   {place.name}
                 </h3>
-                <p className="text-white/70 text-sm leading-relaxed mb-3 max-w-md line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <p className="text-white/80 text-xs sm:text-sm leading-relaxed mb-3 max-w-md line-clamp-2">
                   {place.description}
                 </p>
                 <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/60">
@@ -167,6 +172,7 @@ export default function FeaturedDestinations({ dict, lang }: Props) {
         <div className="text-center mt-12">
           <Link
             href={`/${lang}/destinasi`}
+            aria-label={lang === "en" ? "View all tourist destinations" : "Lihat semua destinasi wisata"}
             className="btn-outline group"
           >
             <span>{dict.common.viewAll}</span>

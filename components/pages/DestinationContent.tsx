@@ -105,11 +105,11 @@ export default function DestinationContent({ dict, lang = "id" }: Props) {
               transition={{ duration: 0.5, ease: "easeOut", delay: (i % 3) * 0.1 }}
               className={`group relative rounded-xl overflow-hidden cursor-pointer block ${
                 i === 0
-                  ? "sm:col-span-2 lg:col-span-2 aspect-[16/9]"
+                  ? "sm:col-span-2 lg:col-span-2 aspect-[4/3] sm:aspect-[16/9]"
                   : i === 1
                   ? "aspect-[4/3] lg:aspect-[8/9]"
                   : i === 6
-                  ? "sm:col-span-2 lg:col-span-2 aspect-[16/9] lg:aspect-[8/3]"
+                  ? "sm:col-span-2 lg:col-span-2 aspect-[4/3] sm:aspect-[16/9] lg:aspect-[8/3]"
                   : "aspect-[4/3]"
               }`}
             >
@@ -124,7 +124,7 @@ export default function DestinationContent({ dict, lang = "id" }: Props) {
               />
 
               {/* Gradient */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1a1714]/80 via-[#1a1714]/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1a1714]/90 via-[#1a1714]/40 to-transparent" />
 
               {/* Category badge */}
               <div className="absolute top-4 left-4 z-10">
@@ -138,7 +138,7 @@ export default function DestinationContent({ dict, lang = "id" }: Props) {
                 <h3 className="text-xl sm:text-2xl font-bold text-white font-serif mb-2 group-hover:text-gold transition-colors duration-300">
                   {place.name}
                 </h3>
-                <p className="text-white/70 text-sm leading-relaxed mb-3 max-w-md line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <p className="text-white/80 text-xs sm:text-sm leading-relaxed mb-3 max-w-md line-clamp-2">
                   {place.description}
                 </p>
                 <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/60">
