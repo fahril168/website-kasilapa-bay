@@ -401,7 +401,6 @@ export default function AccommodationContent({ dict, lang }: Props) {
       <section className="pt-16 section-padding bg-background">
         <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
           <SectionHeader
-            label="Kasilapa Bay"
             title={dict.accommodation.title}
             subtitle={dict.accommodation.subtitle}
           />
@@ -563,7 +562,7 @@ export default function AccommodationContent({ dict, lang }: Props) {
       {/* Facilities */}
       <section className="section-padding bg-surface relative grain-overlay">
         <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
-          <SectionHeader label={dict.accommodation.title} title={dict.accommodation.facilities} />
+          <SectionHeader title={dict.accommodation.facilities} />
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5 max-w-4xl mx-auto">
             {facilitiesToDisplay.map((fac, i) => (

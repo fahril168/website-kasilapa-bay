@@ -72,7 +72,6 @@ export default function ReviewsPreview({ dict, lang = "id" }: Props) {
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="text-center max-w-2xl mx-auto mb-12 lg:mb-16 px-5 sm:px-6"
         >
-          <span className="label-accent">{dict.reviews.title}</span>
           <h2 className="text-3xl md:text-4xl lg:text-[2.75rem] font-bold text-foreground leading-[1.15] mb-4 tracking-tight">
             {dict.reviews.subtitle}
           </h2>

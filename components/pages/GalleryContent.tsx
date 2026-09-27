@@ -144,7 +144,6 @@ export default function GalleryContent({ dict, lang = "id" }: Props) {
       <section className="pt-16 section-padding bg-background">
         <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
           <SectionHeader
-            label="Kasilapa Bay"
             title={dict.gallery.title}
             subtitle={dict.gallery.subtitle}
           />

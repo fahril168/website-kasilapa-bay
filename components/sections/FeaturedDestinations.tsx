@@ -87,7 +87,7 @@ export default function FeaturedDestinations({ dict, lang }: Props) {
     <section className="section-padding bg-background relative overflow-hidden grain-overlay">
       {/* Background Image - Fixed position so it doesn't scroll with content */}
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed pointer-events-none"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-scroll md:bg-fixed pointer-events-none"
         style={{ backgroundImage: "url('/img/beach.webp')" }}
       />
       {/* Overlay to soften background image */}
@@ -101,7 +101,6 @@ export default function FeaturedDestinations({ dict, lang }: Props) {
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="text-center max-w-2xl mx-auto mb-12 lg:mb-16"
         >
-          <span className="label-accent">{dict.destination.title}</span>
           <h2 className="text-3xl md:text-4xl lg:text-[2.75rem] font-bold text-foreground leading-[1.15] mb-4 tracking-tight">
             {dict.destination.subtitle}
           </h2>

@@ -39,7 +39,6 @@ export default function ContactContent({ dict }: Props) {
     <section className="pt-16 section-padding bg-background">
       <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         <SectionHeader
-          label="Kasilapa Bay"
           title={dict.contact.title}
           subtitle={dict.contact.subtitle}
         />

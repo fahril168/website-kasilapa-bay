@@ -33,6 +33,7 @@ import {
   TrendingUp,
   Users,
   Eye,
+  EyeOff,
   Globe,
   Smartphone,
   Monitor,
@@ -265,12 +266,6 @@ function formatRelativeTime(dateStr: string): string {
   }
 }
 
-function getStraightPath(points: { x: number; y: number }[]): string {
-  if (!points || points.length === 0) return "";
-  return points.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ");
-}
-
-
 /* ──────────────── Helpers ──────────────── */
 
 const inputCls = "w-full border border-gray-300 rounded-lg px-3.5 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition-all shadow-xs";
@@ -287,6 +282,7 @@ export default function AdminDashboardContent() {
   const [authToken, setAuthToken] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [loginErr, setLoginErr] = useState("");
 
   /* UI */
@@ -302,7 +298,6 @@ export default function AdminDashboardContent() {
   const [visitorStats, setVisitorStats] = useState<VisitorStatsData>(EMPTY_VISITOR_STATS);
   const [visitorPeriod, setVisitorPeriod] = useState<number>(7);
   const [hoveredTrendIndex, setHoveredTrendIndex] = useState<number | null>(null);
-  const [statsLoading, setStatsLoading] = useState<boolean>(false);
   const [chartType, setChartType] = useState<"line" | "bar">("line");
 
   /* Data initialized empty and populated directly from live MySQL database */
@@ -313,7 +308,6 @@ export default function AdminDashboardContent() {
   const [facilities, setFacilities] = useState<Facility[]>(EMPTY_FACILITIES);
   const [contacts, setContacts] = useState<SiteContacts>(EMPTY_CONTACTS);
   const [settings, setSettings] = useState<SiteSettings>(EMPTY_SETTINGS);
-  const [syncLoading, setSyncLoading] = useState<boolean>(false);
 
   useEffect(() => {
     // Purge old synthetic dummy data if previously stored in localStorage
@@ -838,7 +832,6 @@ export default function AdminDashboardContent() {
 
   /* ── Visitor Stats API Helper ── */
   async function fetchVisitorStats(days = visitorPeriod) {
-    setStatsLoading(true);
     try {
       const res = await fetch(getApiUrl(`/api/visitor_stats.php?days=${days}`));
       if (res.ok) {
@@ -862,8 +855,6 @@ export default function AdminDashboardContent() {
         period_days: days,
       };
       setVisitorStats(emptyData);
-    } finally {
-      setStatsLoading(false);
     }
   }
 
@@ -963,6 +954,12 @@ export default function AdminDashboardContent() {
       }
     }
 
+    // Default English text to Indonesian if left empty by user
+    if (payload.title_id && !payload.title_en) payload.title_en = payload.title_id;
+    if (payload.name_id && !payload.name_en) payload.name_en = payload.name_id;
+    if (payload.description_id && !payload.description_en) payload.description_en = payload.description_id;
+    if (payload.comment_id && !payload.comment_en) payload.comment_en = payload.comment_id;
+
     // Functional update + persistent storage
     setter((prev: any[]) => {
       const updated = isEdit 
@@ -1036,70 +1033,6 @@ export default function AdminDashboardContent() {
     }
   }
 
-  async function saveSettings(e: React.FormEvent) {
-    e.preventDefault(); setLoading(true); setToast(null);
-    setStoredData(STORAGE_KEYS.SETTINGS, settings);
-    setToast({ type: "ok", text: "Pengaturan berhasil disimpan!" });
-
-    try {
-      const res = await fetch(getApiUrl("/api/pengaturan.php"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${authToken}` },
-        body: JSON.stringify(settings)
-      });
-      const j = await res.json();
-      if (res.status === 401) { logout(); setToast({ type: "err", text: "Sesi telah berakhir. Silakan login kembali." }); return; }
-      if (res.ok && j.status === "success") { setToast({ type: "ok", text: "Pengaturan berhasil disimpan ke Database!" }); return; }
-    } catch {
-      // Local persistent storage already updated
-    } finally { setLoading(false); }
-  }
-
-  async function handlePasswordChange(e: React.FormEvent) {
-    e.preventDefault();
-    setPwdMsg(null);
-
-    if (newPassword && newPassword !== confirmPassword) {
-      setPwdMsg({ type: "err", text: "Konfirmasi password baru tidak cocok!" });
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const res = await fetch(getApiUrl("/api/ganti_password.php"), {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authToken}`
-        },
-        body: JSON.stringify({
-          current_password: currentPassword,
-          new_username: newUsername,
-          new_password: newPassword
-        })
-      });
-
-      if (res.status === 401) { logout(); setToast({ type: "err", text: "Sesi telah berakhir. Silakan login kembali." }); return; }
-
-      const d = await res.json();
-      if (res.ok && d.status === "success") {
-        setPwdMsg({ type: "ok", text: d.message || "Username dan Password Admin berhasil diperbarui di Database!" });
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-        return;
-      }
-      setPwdMsg({ type: "err", text: d.message || "Gagal memperbarui kata sandi." });
-    } catch {
-      setPwdMsg({ type: "ok", text: "Username/Password Admin diperbarui (Preview)" });
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-    } finally {
-      setLoading(false);
-    }
-  }
-
   /* ──────────── LOGIN SCREEN ──────────── */
 
   if (!isAuth) {
@@ -1133,7 +1066,23 @@ export default function AdminDashboardContent() {
               <label className={labelCls}>Password</label>
               <div className="relative">
                 <KeyRound size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input type="password" required value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" className={inputCls + " pl-9"} />
+                <input 
+                  type={showLoginPassword ? "text" : "password"} 
+                  required 
+                  value={password} 
+                  onChange={e => setPassword(e.target.value)} 
+                  placeholder="••••••••" 
+                  className={inputCls + " pl-9 pr-10"} 
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowLoginPassword(!showLoginPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors p-1 cursor-pointer focus:outline-hidden"
+                  title={showLoginPassword ? "Sembunyikan password" : "Lihat password"}
+                  tabIndex={-1}
+                >
+                  {showLoginPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
               </div>
             </div>
             <button type="submit" className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">
@@ -1472,7 +1421,6 @@ export default function AdminDashboardContent() {
                 const visitorsArea = visitorsPts.length > 0 ? `${visitorsLine} L ${visitorsPts[visitorsPts.length - 1]?.x.toFixed(1)} ${bottomY} L ${visitorsPts[0]?.x.toFixed(1)} ${bottomY} Z` : "";
 
                 const topPages = (visitorStats.top_pages || []).slice(0, 5);
-                const topCountries = (visitorStats.top_countries || []).slice(0, 5);
 
                 return (
                   <div className="bg-white rounded-lg border border-[#dee2e6] shadow-xs">
@@ -2249,7 +2197,23 @@ export default function AdminDashboardContent() {
 
               <Section 
                 title="Manajemen Kamar &amp; Akomodasi" 
-                desc="Kelola status aktif kamar di website, tarif per malam, fasilitas, dan foto kamar dari Media Library."
+                desc="Kelola data kamar Kasilapa Bay, status aktif di website, tarif per malam, fasilitas, dan foto kamar dari Media Library."
+                onAdd={() => {
+                  setEditItem({
+                    title_id: "",
+                    title_en: "",
+                    slug: "",
+                    price_per_night: 250000,
+                    capacity: 2,
+                    bed_type: "Double Bed",
+                    image_url: "/img/room.webp",
+                    description_id: "",
+                    description_en: "",
+                    images: [],
+                    is_active: 1
+                  });
+                  setModalType("room");
+                }}
               >
                 <Table heads={["Foto", "Nama Kamar", "Harga / Malam", "Kapasitas", "Tipe Kasur", "Status Website", "Aksi"]}>
                   {rooms.length === 0 ? (
@@ -2257,6 +2221,7 @@ export default function AdminDashboardContent() {
                       <td colSpan={7} className="text-center py-12 text-[#6c757d]">
                         <BedDouble size={28} className="mx-auto text-[#adb5bd] mb-2" />
                         <p className="font-semibold text-sm">Belum ada data kamar di database</p>
+                        <p className="text-xs text-[#adb5bd] mt-0.5">Klik tombol &quot;Tambah Baru&quot; di atas untuk memasukkan kamar pertama.</p>
                       </td>
                     </tr>
                   ) : (
@@ -2279,7 +2244,7 @@ export default function AdminDashboardContent() {
                             <p className="text-[11px] text-[#adb5bd] font-mono">/{r.slug}</p>
                           </td>
                           <td className="px-4 py-3">
-                            <span className="inline-block bg-[#d4edda] text-[#155724] border border-[#c3e6cb] text-xs px-2.5 py-1 rounded-md font-bold">
+                            <span className="inline-block bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs px-2.5 py-1 rounded-md font-bold">
                               Rp {Number(r.price_per_night).toLocaleString("id-ID")}
                             </span>
                           </td>
@@ -2290,13 +2255,13 @@ export default function AdminDashboardContent() {
                               type="button"
                               onClick={() => toggleRoomActive(r)}
                               title={isActive ? "Klik untuk sembunyikan kamar ini dari website" : "Klik untuk tampilkan kamar ini di website"}
-                              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold transition-all border shadow-2xs cursor-pointer ${
+                              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all border shadow-2xs cursor-pointer ${
                                 isActive
-                                  ? "bg-[#d4edda] text-[#155724] border-[#c3e6cb] hover:bg-[#c3e6cb]"
-                                  : "bg-[#f8f9fa] text-[#6c757d] border-[#dee2e6] hover:bg-[#e9ecef]"
+                                  ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                                  : "bg-slate-100 text-slate-500 border-slate-300 hover:bg-slate-200"
                               }`}
                             >
-                              <span className={`w-2 h-2 rounded-full ${isActive ? "bg-[#28a745]" : "bg-[#adb5bd]"}`} />
+                              <span className={`w-2 h-2 rounded-full ${isActive ? "bg-emerald-500 animate-pulse" : "bg-slate-400"}`} />
                               {isActive ? "Aktif (Tampil)" : "Nonaktif"}
                             </button>
                           </td>
@@ -2851,7 +2816,7 @@ export default function AdminDashboardContent() {
                       <Field label="Password Baru" value={newPassword} onChange={setNewPassword} type="password" required />
                       <Field label="Konfirmasi Password Baru" value={confirmPassword} onChange={setConfirmPassword} type="password" required />
                     </div>
-                    <button type="submit" className="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition-all">
+                    <button type="submit" className={`${btnPrimary}`}>
                       <KeyRound size={14} /> Perbarui Akun Admin
                     </button>
                   </div>
@@ -2894,7 +2859,7 @@ export default function AdminDashboardContent() {
             <div className="p-6 overflow-y-auto space-y-4">
               {modalType === "room" && <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <Field label="Nama Kamar (ID - Bahasa Indonesia)" value={editItem.title_id} onChange={v => setEditItem((prev: any) => ({ ...prev, title_id: v, title_en: prev?.title_en || v, slug: v.toLowerCase().replace(/\s+/g, "-") }))} required />
+                  <Field label="Nama Kamar (ID - Bahasa Indonesia)" value={editItem.title_id} onChange={v => setEditItem((prev: any) => ({ ...prev, title_id: v, slug: v.toLowerCase().replace(/\s+/g, "-") }))} required />
                   <Field label="Nama Kamar (EN - English)" value={editItem.title_en} onChange={v => setEditItem((prev: any) => ({ ...prev, title_en: v }))} required />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -2974,13 +2939,13 @@ export default function AdminDashboardContent() {
                     });
                   }}
                 />
-                <Field label="Deskripsi Kamar (ID - Bahasa Indonesia)" value={editItem.description_id} onChange={v => setEditItem((prev: any) => ({ ...prev, description_id: v, description_en: prev?.description_en || v }))} textarea />
+                <Field label="Deskripsi Kamar (ID - Bahasa Indonesia)" value={editItem.description_id} onChange={v => setEditItem((prev: any) => ({ ...prev, description_id: v }))} textarea />
                 <Field label="Deskripsi Kamar (EN - English)" value={editItem.description_en} onChange={v => setEditItem((prev: any) => ({ ...prev, description_en: v }))} textarea />
               </>}
 
               {modalType === "destination" && <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <Field label="Nama Destinasi (ID - Bahasa Indonesia)" value={editItem.name_id} onChange={v => setEditItem((prev: any) => ({ ...prev, name_id: v, name_en: prev?.name_en || v }))} required />
+                  <Field label="Nama Destinasi (ID - Bahasa Indonesia)" value={editItem.name_id} onChange={v => setEditItem((prev: any) => ({ ...prev, name_id: v }))} required />
                   <Field label="Nama Destinasi (EN - English)" value={editItem.name_en} onChange={v => setEditItem((prev: any) => ({ ...prev, name_en: v }))} required />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -3079,13 +3044,13 @@ export default function AdminDashboardContent() {
                     Masukkan link artikel destinasi dari <span className="font-mono text-slate-700 bg-slate-100 px-1 py-0.5 rounded">wakatobitourism.com</span> untuk mengimpor foto resolusi tinggi secara otomatis.
                   </p>
                 </div>
-                <Field label="Deskripsi Destinasi (ID - Bahasa Indonesia)" value={editItem.description_id} onChange={v => setEditItem((prev: any) => ({ ...prev, description_id: v, description_en: prev?.description_en || v }))} textarea />
+                <Field label="Deskripsi Destinasi (ID - Bahasa Indonesia)" value={editItem.description_id} onChange={v => setEditItem((prev: any) => ({ ...prev, description_id: v }))} textarea />
                 <Field label="Deskripsi Destinasi (EN - English)" value={editItem.description_en} onChange={v => setEditItem((prev: any) => ({ ...prev, description_en: v }))} textarea />
               </>}
 
               {modalType === "gallery" && <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <Field label="Judul Foto (ID - Bahasa Indonesia)" value={editItem.title_id} onChange={v => setEditItem((prev: any) => ({ ...prev, title_id: v, title_en: prev?.title_en || v }))} required />
+                  <Field label="Judul Foto (ID - Bahasa Indonesia)" value={editItem.title_id} onChange={v => setEditItem((prev: any) => ({ ...prev, title_id: v }))} required />
                   <Field label="Judul Foto (EN - English)" value={editItem.title_en} onChange={v => setEditItem((prev: any) => ({ ...prev, title_en: v }))} required />
                 </div>
                 <div>
@@ -3129,14 +3094,14 @@ export default function AdminDashboardContent() {
                   <Field label="Asal Kota / Negara" value={editItem.origin} onChange={v => setEditItem({ ...editItem, origin: v })} required />
                   <Field label="Rating Bintang (1-5)" value={editItem.rating} onChange={v => setEditItem({ ...editItem, rating: Number(v) })} type="number" required />
                 </div>
-                <Field label="Ulasan Tamu (ID - Bahasa Indonesia)" value={editItem.comment_id} onChange={v => setEditItem({ ...editItem, comment_id: v, comment_en: editItem.comment_en || v })} textarea required />
-                <Field label="Ulasan Tamu (EN - English)" value={editItem.comment_en} onChange={v => setEditItem({ ...editItem, comment_en: v })} textarea />
+                <Field label="Ulasan Tamu (ID - Bahasa Indonesia)" value={editItem.comment_id} onChange={v => setEditItem((prev: any) => ({ ...prev, comment_id: v }))} textarea required />
+                <Field label="Ulasan Tamu (EN - English)" value={editItem.comment_en} onChange={v => setEditItem((prev: any) => ({ ...prev, comment_en: v }))} textarea />
               </>}
 
               {modalType === "facility" && <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <Field label="Nama Fasilitas (ID - Bahasa Indonesia)" value={editItem.title_id} onChange={v => setEditItem({ ...editItem, title_id: v, title_en: editItem.title_en || v })} required />
-                  <Field label="Nama Fasilitas (EN - English)" value={editItem.title_en} onChange={v => setEditItem({ ...editItem, title_en: v })} required />
+                  <Field label="Nama Fasilitas (ID - Bahasa Indonesia)" value={editItem.title_id} onChange={v => setEditItem((prev: any) => ({ ...prev, title_id: v }))} required />
+                  <Field label="Nama Fasilitas (EN - English)" value={editItem.title_en} onChange={v => setEditItem((prev: any) => ({ ...prev, title_en: v }))} required />
                 </div>
               </>}
             </div>
@@ -3515,7 +3480,7 @@ export default function AdminDashboardContent() {
                     }}
                     className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
                       pickerCategory === cat.key
-                        ? "bg-slate-900 text-white shadow-2xs"
+                        ? "bg-blue-600 text-white shadow-xs"
                         : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                     }`}
                   >
@@ -3654,7 +3619,7 @@ export default function AdminDashboardContent() {
                           <span 
                             className={`absolute bottom-1.5 left-1.5 text-[9px] font-semibold px-1.5 py-0.5 rounded shadow-xs ${
                               usageCount > 0 
-                                ? "bg-slate-900/80 text-white backdrop-blur-xs" 
+                                ? "bg-blue-900/85 text-white backdrop-blur-xs" 
                                 : "bg-emerald-600/90 text-white backdrop-blur-xs"
                             }`}
                             title={usageCount > 0 ? `Foto ini digunakan di ${usageCount} kamar/destinasi` : "Belum digunakan di kamar/destinasi manapun"}
@@ -3774,7 +3739,7 @@ function Section({
         <div className="flex flex-wrap items-center gap-2">
           {extraAction}
           {onAdd && (
-            <button onClick={onAdd} className="inline-flex items-center gap-2 bg-[#007bff] hover:bg-[#0069d9] text-white text-sm font-semibold px-4 py-2.5 rounded-md transition-colors shadow-xs cursor-pointer">
+            <button onClick={onAdd} className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors shadow-xs hover:shadow-md cursor-pointer">
               <Plus size={16} /> Tambah Baru
             </button>
           )}
@@ -3820,11 +3785,34 @@ function Card({ title, children }: { title?: string; children: React.ReactNode }
 }
 
 function Field({ label, value, onChange, type = "text", textarea, required, placeholder }: { label: string; value: any; onChange: (v: string) => void; type?: string; textarea?: boolean; required?: boolean; placeholder?: string }) {
+  const [showPassword, setShowPassword] = useState(false);
+  const isPassword = type === "password";
+
   return (
     <div>
       <label className={labelCls}>{label}</label>
       {textarea ? (
         <textarea rows={3} value={value || ""} onChange={e => onChange(e.target.value)} required={required} placeholder={placeholder} className={inputCls} />
+      ) : isPassword ? (
+        <div className="relative">
+          <input 
+            type={showPassword ? "text" : "password"} 
+            value={value ?? ""} 
+            onChange={e => onChange(e.target.value)} 
+            required={required} 
+            placeholder={placeholder} 
+            className={`${inputCls} pr-10`} 
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors p-1 cursor-pointer focus:outline-hidden"
+            title={showPassword ? "Sembunyikan password" : "Lihat password"}
+            tabIndex={-1}
+          >
+            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
+        </div>
       ) : (
         <input type={type} value={value ?? ""} onChange={e => onChange(e.target.value)} required={required} placeholder={placeholder} className={inputCls} />
       )}
@@ -3871,10 +3859,10 @@ function ImageUploadField({
             <button
               type="button"
               onClick={onOpenGalleryPicker}
-              className="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs font-medium px-3.5 py-2 rounded-lg transition-colors shadow-xs cursor-pointer"
+              className="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs font-semibold px-3.5 py-2 rounded-lg transition-colors shadow-xs cursor-pointer"
             >
               <ImageIcon size={15} className="text-slate-500" />
-              <span>Pilih dari Galeri</span>
+              <span>Pilih dari Media Library</span>
             </button>
           )}
 
@@ -4058,7 +4046,7 @@ function MultiImageManager({
                   <button
                     type="button"
                     onClick={() => handleRemove(idx)}
-                    className="absolute top-2 right-2 z-10 w-6 h-6 rounded-md bg-slate-900/60 hover:bg-red-600 text-white flex items-center justify-center transition-colors opacity-70 group-hover:opacity-100 cursor-pointer shadow-xs"
+                    className="absolute top-2 right-2 z-10 w-6 h-6 rounded-full bg-slate-900/60 hover:bg-red-600 text-white flex items-center justify-center transition-colors opacity-70 group-hover:opacity-100 cursor-pointer shadow-xs"
                     title="Lepas foto ini"
                   >
                     <Trash2 size={12} />

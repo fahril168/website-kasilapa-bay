@@ -146,14 +146,9 @@ export default function AboutSection({ dict, lang = "id" }: Props) {
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             className="lg:col-span-5 text-left"
           >
-            <span className="label-accent">Kasilapa Bay</span>
-
             <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-foreground leading-[1.12] mb-6 tracking-tight font-serif">
               {dynamicHeadline}
             </h2>
-
-            {/* Gold accent divider */}
-            <div className="w-12 h-0.5 bg-gold mb-6" />
 
             <p className="text-muted text-base sm:text-lg leading-relaxed font-normal mb-10">
               {dynamicDescription}

@@ -27,6 +27,16 @@ export default function FeaturedRooms({ dict, lang }: Props) {
   const { roomLayoutSingle, whatsappNumber } = useDynamicSettings();
   const [dynamicRooms, setDynamicRooms] = useState<any[]>([]);
   const [activeRoomIndex, setActiveRoomIndex] = useState(0);
+  const [gridSlideIndex, setGridSlideIndex] = useState(0);
+  const [isDesktop, setIsDesktop] = useState(false);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     // 1. Initial load from local persistent storage
@@ -54,7 +64,7 @@ export default function FeaturedRooms({ dict, lang }: Props) {
           setStoredData(STORAGE_KEYS.ROOMS, json.data);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
 
     return () => {
       window.removeEventListener(DATA_SYNC_EVENT, handleSync);
@@ -84,12 +94,22 @@ export default function FeaturedRooms({ dict, lang }: Props) {
     };
   });
 
+  const maxGridIndex = isDesktop
+    ? Math.max(0, roomsToDisplay.length - 2)
+    : Math.max(0, roomsToDisplay.length - 1);
+
   // Safety clamp if active room index is out of bounds
   useEffect(() => {
     if (activeRoomIndex >= roomsToDisplay.length && roomsToDisplay.length > 0) {
       setActiveRoomIndex(0);
     }
   }, [roomsToDisplay.length, activeRoomIndex]);
+
+  useEffect(() => {
+    if (gridSlideIndex > maxGridIndex) {
+      setGridSlideIndex(maxGridIndex);
+    }
+  }, [maxGridIndex, gridSlideIndex]);
 
   if (roomsToDisplay.length === 0) return null;
 
@@ -105,6 +125,35 @@ export default function FeaturedRooms({ dict, lang }: Props) {
     if (e) e.stopPropagation();
     setActiveRoomIndex((prev) => (prev >= roomsToDisplay.length - 1 ? 0 : prev + 1));
   };
+
+  const handlePrevGrid = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setGridSlideIndex((prev) => (prev <= 0 ? maxGridIndex : prev - 1));
+  };
+
+  const handleNextGrid = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setGridSlideIndex((prev) => (prev >= maxGridIndex ? 0 : prev + 1));
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (diff > 45) {
+      handleNextGrid();
+    } else if (diff < -45) {
+      handlePrevGrid();
+    }
+    setTouchStartX(null);
+  };
+
+  const showGridNav = isDesktop
+    ? roomsToDisplay.length > 2
+    : roomsToDisplay.length > 1;
 
   const currentWaMessage =
     lang === "id"
@@ -127,7 +176,6 @@ export default function FeaturedRooms({ dict, lang }: Props) {
             className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6"
           >
             <div>
-              <span className="label-accent">{dict.accommodation.title}</span>
               <h2 className="text-3xl md:text-4xl lg:text-[2.75rem] font-bold text-white leading-[1.15] tracking-tight font-serif">
                 {dict.accommodation.subtitle}
               </h2>
@@ -135,10 +183,10 @@ export default function FeaturedRooms({ dict, lang }: Props) {
             <div className="flex items-center gap-4">
               <Link
                 href={`/${lang}/akomodasi`}
-                aria-label={lang === "en" ? "View all accommodations" : "Lihat semua kamar akomodasi"}
+                aria-label={lang === "en" ? "Learn more about accommodations" : "Selengkapnya tentang kamar akomodasi"}
                 className="inline-flex items-center gap-2 text-sm font-semibold text-gold hover:text-gold-light transition-colors duration-200 tracking-wide uppercase group shrink-0"
               >
-                <span>{dict.common.viewAll}</span>
+                <span>{dict.common.learnMore}</span>
                 <ArrowRight
                   size={15}
                   className="group-hover:translate-x-1.5 transition-transform duration-200"
@@ -288,18 +336,40 @@ export default function FeaturedRooms({ dict, lang }: Props) {
           className="mb-10 lg:mb-14 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6"
         >
           <div>
-            <span className="label-accent">{dict.accommodation.title}</span>
             <h2 className="text-3xl md:text-4xl lg:text-[2.75rem] font-bold text-white leading-[1.15] tracking-tight font-serif">
               {dict.accommodation.subtitle}
             </h2>
           </div>
           <div className="flex items-center gap-4">
+            {roomLayoutSingle === "grid" && showGridNav && (
+              <div className="flex items-center gap-1.5 mr-2">
+                <button
+                  type="button"
+                  onClick={handlePrevGrid}
+                  aria-label="Kamar Sebelumnya"
+                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-gold hover:text-dark-warm text-white flex items-center justify-center transition-all cursor-pointer shadow-sm active:scale-95 border border-white/15"
+                >
+                  <ChevronLeft size={18} />
+                </button>
+                <span className="text-xs font-mono text-white/60 tabular-nums px-1">
+                  {gridSlideIndex + 1}/{maxGridIndex + 1}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleNextGrid}
+                  aria-label="Kamar Berikutnya"
+                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-gold hover:text-dark-warm text-white flex items-center justify-center transition-all cursor-pointer shadow-sm active:scale-95 border border-white/15"
+                >
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            )}
             <Link
               href={`/${lang}/akomodasi`}
-              aria-label={lang === "en" ? "View all accommodations" : "Lihat semua kamar akomodasi"}
+              aria-label={lang === "en" ? "Learn more about accommodations" : "Selengkapnya tentang kamar akomodasi"}
               className="inline-flex items-center gap-2 text-sm font-semibold text-gold hover:text-gold-light transition-colors duration-200 tracking-wide uppercase group shrink-0"
             >
-              <span>{dict.common.viewAll}</span>
+              <span>{dict.common.learnMore}</span>
               <ArrowRight
                 size={15}
                 className="group-hover:translate-x-1.5 transition-transform duration-200"
@@ -550,80 +620,206 @@ export default function FeaturedRooms({ dict, lang }: Props) {
           </div>
         )}
 
-        {/* ── OPSI 4: GRID 2 KOLOM ── */}
+        {/* ── OPSI 4: GRID / CAROUSEL BERDAMPINGAN (SLIDE BY 1) ── */}
         {roomLayoutSingle === "grid" && (
-          <div className={roomsToDisplay.length === 1 ? "max-w-2xl mx-auto" : "grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5"}>
-            {roomsToDisplay.map((room, i) => {
-              const gridWaMessage =
-                lang === "id"
-                  ? `Halo, saya ingin memesan ${room.name} di Kasilapa Bay. Mohon informasikan ketersediaannya.`
-                  : `Hello, I'd like to book the ${room.name} at Kasilapa Bay. Could you check availability?`;
-              return (
-                <motion.div
-                  key={room.name + i}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-40px" }}
-                  transition={{ duration: 0.6, delay: i * 0.15 }}
-                  className="relative rounded-xl overflow-hidden"
-                  style={{ minHeight: "480px" }}
-                >
-                  <img
-                    src={room.image || "/img/placeholder.svg"}
-                    alt={room.name}
-                    loading="lazy"
-                    decoding="async"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/img/placeholder.svg";
-                    }}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-
-                  {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent pointer-events-none" />
-
-                  {/* Content */}
-                  <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8 z-10">
-                    <h3 className="text-2xl sm:text-3xl font-bold text-white font-serif mb-1.5">
-                      {room.name}
-                    </h3>
-
-                    {/* Specs inline — no boxes */}
-                    <div className="flex items-center gap-3 text-white/50 text-xs mb-4">
-                      <span className="flex items-center gap-1">
-                        <Users size={13} />
-                        {room.capacity} {dict.accommodation.guests}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <BedDouble size={13} />
-                        {room.bedType}
-                      </span>
-                    </div>
-
-                    <div className="flex items-end justify-between gap-4">
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-xl sm:text-2xl font-bold text-gold font-sans">
-                          {formatPrice(room.price)}
+          roomsToDisplay.length === 1 ? (
+            <div className="max-w-2xl mx-auto">
+              {/* Single Room Card */}
+              {(() => {
+                const room = roomsToDisplay[0];
+                const gridWaMessage =
+                  lang === "id"
+                    ? `Halo, saya ingin memesan ${room.name} di Kasilapa Bay. Mohon informasikan ketersediaannya.`
+                    : `Hello, I'd like to book the ${room.name} at Kasilapa Bay. Could you check availability?`;
+                return (
+                  <div className="relative rounded-xl overflow-hidden shadow-2xl border border-white/10" style={{ minHeight: "480px" }}>
+                    <img
+                      src={room.image || "/img/placeholder.svg"}
+                      alt={room.name}
+                      loading="lazy"
+                      decoding="async"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "/img/placeholder.svg";
+                      }}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8 z-10">
+                      <h3 className="text-2xl sm:text-3xl font-bold text-white font-serif mb-1.5 tracking-tight">
+                        {room.name}
+                      </h3>
+                      {room.description && (
+                        <p className="text-white/70 text-xs sm:text-sm line-clamp-2 mb-3 max-w-md">
+                          {room.description}
+                        </p>
+                      )}
+                      <div className="flex items-center gap-4 text-white/60 text-xs mb-4">
+                        <span className="flex items-center gap-1.5">
+                          <Users size={13} />
+                          {room.capacity} {dict.accommodation.guests}
                         </span>
-                        <span className="text-white/40 text-xs font-medium">
-                          / {lang === "en" ? "night" : "malam"}
+                        <span className="flex items-center gap-1.5">
+                          <BedDouble size={13} />
+                          {room.bedType}
                         </span>
                       </div>
-                      <a
-                        href={getWhatsAppUrl(gridWaMessage, whatsappNumber)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-gold text-xs py-2.5 px-5 flex items-center gap-2 font-semibold tracking-wide uppercase"
-                      >
-                        <MessageCircle size={14} />
-                        <span>{dict.accommodation.bookCta}</span>
-                      </a>
+                      <div className="flex items-end justify-between gap-4 pt-3 border-t border-white/10">
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-xl sm:text-2xl font-bold text-gold font-sans">
+                            {formatPrice(room.price)}
+                          </span>
+                          <span className="text-white/50 text-xs font-medium">
+                            / {lang === "en" ? "night" : "malam"}
+                          </span>
+                        </div>
+                        <a
+                          href={getWhatsAppUrl(gridWaMessage, whatsappNumber)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-gold text-xs py-2.5 px-5 flex items-center gap-2 font-semibold tracking-wide uppercase shadow-md active:scale-95 transition-all"
+                        >
+                          <MessageCircle size={14} />
+                          <span>{dict.accommodation.bookCta}</span>
+                        </a>
+                      </div>
                     </div>
                   </div>
-                </motion.div>
-              );
-            })}
-          </div>
+                );
+              })()}
+            </div>
+          ) : (
+            <div className="relative group">
+              {/* Carousel Viewport Container */}
+              <div
+                className="overflow-hidden cursor-grab active:cursor-grabbing select-none"
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+              >
+                <div
+                  className="flex transition-transform duration-500 ease-out -mx-2 sm:-mx-2.5"
+                  style={{
+                    transform: `translateX(-${isDesktop ? gridSlideIndex * 50 : gridSlideIndex * 100}%)`,
+                  }}
+                >
+                  {roomsToDisplay.map((room, i) => {
+                    const gridWaMessage =
+                      lang === "id"
+                        ? `Halo, saya ingin memesan ${room.name} di Kasilapa Bay. Mohon informasikan ketersediaannya.`
+                        : `Hello, I'd like to book the ${room.name} at Kasilapa Bay. Could you check availability?`;
+                    return (
+                      <div
+                        key={room.id || room.name + i}
+                        className="w-full md:w-1/2 shrink-0 px-2 sm:px-2.5"
+                      >
+                        <div
+                          className="relative rounded-xl overflow-hidden h-full group/card transition-all duration-300 border border-white/10 hover:border-gold/40 shadow-xl"
+                          style={{ minHeight: "480px" }}
+                        >
+                          <img
+                            src={room.image || "/img/placeholder.svg"}
+                            alt={room.name}
+                            loading="lazy"
+                            decoding="async"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = "/img/placeholder.svg";
+                            }}
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover/card:scale-105"
+                          />
+
+                          {/* Gradient overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent pointer-events-none" />
+
+                          {/* Content */}
+                          <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8 z-10">
+                            <h3 className="text-2xl sm:text-3xl font-bold text-white font-serif mb-1.5 tracking-tight">
+                              {room.name}
+                            </h3>
+
+                            {/* Description preview */}
+                            {room.description && (
+                              <p className="text-white/70 text-xs sm:text-sm line-clamp-2 mb-3 max-w-md">
+                                {room.description}
+                              </p>
+                            )}
+
+                            {/* Specs inline — no boxes */}
+                            <div className="flex items-center gap-4 text-white/60 text-xs mb-4">
+                              <span className="flex items-center gap-1.5">
+                                <Users size={13} />
+                                {room.capacity} {dict.accommodation.guests}
+                              </span>
+                              <span className="flex items-center gap-1.5">
+                                <BedDouble size={13} />
+                                {room.bedType}
+                              </span>
+                            </div>
+
+                            <div className="flex items-end justify-between gap-4 pt-3 border-t border-white/10">
+                              <div className="flex items-baseline gap-1">
+                                <span className="text-xl sm:text-2xl font-bold text-gold font-sans">
+                                  {formatPrice(room.price)}
+                                </span>
+                                <span className="text-white/50 text-xs font-medium">
+                                  / {lang === "en" ? "night" : "malam"}
+                                </span>
+                              </div>
+                              <a
+                                href={getWhatsAppUrl(gridWaMessage, whatsappNumber)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="btn-gold text-xs py-2.5 px-5 flex items-center gap-2 font-semibold tracking-wide uppercase shadow-md active:scale-95 transition-all"
+                              >
+                                <MessageCircle size={14} />
+                                <span>{dict.accommodation.bookCta}</span>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Floating Arrows on Left & Right for Desktop */}
+              {showGridNav && (
+                <>
+                  <button
+                    type="button"
+                    onClick={handlePrevGrid}
+                    aria-label="Kamar Sebelumnya"
+                    className="hidden md:flex absolute -left-4 lg:-left-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/60 hover:bg-gold hover:text-dark-warm text-white border border-white/20 items-center justify-center backdrop-blur-md transition-all shadow-xl active:scale-95 cursor-pointer opacity-80 hover:opacity-100"
+                  >
+                    <ChevronLeft size={22} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleNextGrid}
+                    aria-label="Kamar Berikutnya"
+                    className="hidden md:flex absolute -right-4 lg:-right-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/60 hover:bg-gold hover:text-dark-warm text-white border border-white/20 items-center justify-center backdrop-blur-md transition-all shadow-xl active:scale-95 cursor-pointer opacity-80 hover:opacity-100"
+                  >
+                    <ChevronRight size={22} />
+                  </button>
+                </>
+              )}
+
+              {/* Pagination Dots at bottom */}
+              {showGridNav && (
+                <div className="flex items-center justify-center gap-2 mt-6">
+                  {Array.from({ length: maxGridIndex + 1 }).map((_, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setGridSlideIndex(idx)}
+                      aria-label={`Ke slide ${idx + 1}`}
+                      className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${idx === gridSlideIndex ? "w-8 bg-gold" : "w-2 bg-white/20 hover:bg-white/40"
+                        }`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )
         )}
       </div>
     </section>

@@ -87,7 +87,6 @@ export default function DestinationContent({ dict, lang = "id" }: Props) {
     <section className="pt-16 section-padding bg-background">
       <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         <SectionHeader
-          label="Wakatobi"
           title={dict.destination.title}
           subtitle={dict.destination.subtitle}
         />

@@ -41,10 +41,6 @@ export default function HeroSection({ dict, lang }: Props) {
 
       {/* Content — Rendered immediately without blocking delays for optimal LCP */}
       <div className="relative z-10 mx-auto max-w-5xl w-full px-5 sm:px-6 lg:px-8 text-center flex flex-col items-center">
-        {/* Location label */}
-        <span className="inline-block text-[11px] sm:text-xs font-bold tracking-[0.3em] uppercase text-white/60 mb-6">
-          Tomia Island · Wakatobi
-        </span>
 
         {/* Main heading */}
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-white leading-[1.05] mb-6 font-serif font-bold tracking-tight">

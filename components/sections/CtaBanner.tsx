@@ -17,7 +17,7 @@ export default function CtaBanner({ dict }: Props) {
     <section className="relative py-24 sm:py-32 lg:py-40 overflow-hidden">
       {/* Background image */}
       <div
-        className="absolute inset-0 bg-cover bg-center bg-fixed"
+        className="absolute inset-0 bg-cover bg-center bg-scroll md:bg-fixed"
         style={{ backgroundImage: "url('/img/room.webp')" }}
       />
 
@@ -42,9 +42,6 @@ export default function CtaBanner({ dict }: Props) {
           viewport={{ once: true }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="inline-block text-[11px] font-bold tracking-[0.3em] uppercase text-gold/80 mb-6">
-            Kasilapa Bay
-          </span>
 
           <h2
             className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] text-white leading-[1.12] mb-6 font-bold tracking-tight"
